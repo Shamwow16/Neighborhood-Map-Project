@@ -44,22 +44,26 @@ var geoLocations = [
 
 ]
 
-var geoLocation = function(){
+var geoLocation = function(data){
 	/*this.personName = ko.observable('Bob');
 	this.personAge = ko.observable(123);*/
 	var self=this;
-	self.name = ko.observable('');
-	self.longitude = ko.observable('');
-	self.latitude = ko.observable('');
-	self.streetAddress = ko.observable('');
+	self.name = ko.observable(data.name);
+	self.longitude = ko.observable(data.longitude);
+	self.latitude = ko.observable(data.latitude);
+	self.streetAddress = ko.observable(data.streetAddress);
 	self.city = "Chicago, IL";
 };
 
 var ViewModel = function(){
 
 	var self = this;
-	self.geoLocation = new geoLocation();
 
+	self.placeList = ko.observableArray([]);
+	geoLocations.forEach(function(place){
+		self.placeList.push(new geoLocation(place));
+	})
+	console.log(self.placeList());
 	self.showMap = function(){
 		console.log(self.geoLocation.streetAddress());
 		console.log('Success');

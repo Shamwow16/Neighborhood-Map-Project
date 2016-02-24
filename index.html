@@ -1,7 +1,7 @@
 <!DOCTYPE <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8" lang="en">
+
   <meta name="viewport" content="initial-scale=1.0">
 	<title>Shamyle's Neighborhood Map</title>
   <link rel="stylesheet" href="css/style.css">
@@ -10,10 +10,10 @@
 
 
 <div class="row" data-bind="with:geoLocation">
-  My name is <span data-bind="text:personName"></span>
+  My name is <span></span>
 <div class="col-sm-12">
 <label>Enter Street Address:</label>
-<input class="input-field" id="address-input" type="text" data-bind="textInput:streetAddress" placeholder="Street Address">
+<input class="input-field" id="address-input" type="text" placeholder="Street Address">
 <label>Enter City:</label>
 <input class="input-field" id="city-input" type="text" data-bind="textInput:city" placeholder="City">
 <button class="btn-primary" data-bind="click:$parent.showMap">Show My Swaggy Neighborhood</button>
@@ -31,8 +31,9 @@
 
 
     <script src="js/lib/knockout-3.2.0.js"></script>
-    <script src="js/map-view.js"></script>
+
     <script src="js/model.js"></script>
+    <script src="js/map-view.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&callback=initMap"
     async defer></script>
 

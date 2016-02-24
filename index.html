@@ -9,17 +9,41 @@
 <body>
 
 
-<div class="row" data-bind="with:geoLocation">
-  My name is <span></span>
+<!-- <div class="row">
 <div class="col-sm-12">
 <label>Enter Street Address:</label>
 <input class="input-field" id="address-input" type="text" placeholder="Street Address">
 <label>Enter City:</label>
-<input class="input-field" id="city-input" type="text" data-bind="textInput:city" placeholder="City">
-<button class="btn-primary" data-bind="click:$parent.showMap">Show My Swaggy Neighborhood</button>
+<input class="input-field" id="city-input" type="text" placeholder="City">
+<button class="btn-primary">Show My Swaggy Neighborhood</button>
 </div>
-</div>
+</div> -->
 
+<div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                        My Swaggy Neighborhood
+                </li>
+                <li class="">
+                    <input id="filter-input" type="text"></input>
+                    <div class="btn-group">
+                    <button id="filter-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
+                    <div class="dropdown-menu">
+                      Filter By
+                      <a class="dropdown-item" href="#">Type of Place</a>
+                      <a class="dropdown-item" href="#">Distance</a>
+                    </div>
+                    </div>
+                </li>
+                <!-- ko foreach: placeList -->
+                <li class="location-item-padding location-item-margin">
+                    <a href="#" data-bind="text:$data.name"></a>
+                </li>
+                <!-- /ko -->
+            </ul>
+        </div>
 	<div id="map"></div>
 
 </body>

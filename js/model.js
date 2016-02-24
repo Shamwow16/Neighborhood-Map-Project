@@ -22,7 +22,26 @@ var geoLocations = [
 		longitude: -87.659878,
 		streetAddress: "4746 N Racine Ave"
 
-					}
+					},
+	{
+		name:"Mariano's",
+		latitude: 41.969294,
+		longitude: -87.675058,
+		streetAddress: "1800 W Lawrence Ave"
+	},
+	{
+		name:"Montrose Beach",
+		latitude: 41.965804,
+		longitude: -87.636410,
+		streetAddress: "4400 North Lake Shore Drive"
+	},
+	{
+		name:"The Bongo Room",
+		latitude: 41.973190,
+		longitude: -87.668225,
+		streetAddress: "5022 N Clark St"
+	}
+
 ]
 
 var geoLocation = function(){

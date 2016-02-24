@@ -1,11 +1,22 @@
-var myViewModel = {
-	personName: ko.observable('Bob'),
-	personAge: ko.observable(123),
-	streetAddress: ko.observable(''),
-	city: ko.observable('')
+
+var geoLocation = function(){
+	this.personName = ko.observable('Bob');
+	this.personAge = ko.observable(123);
+	this.streetAddress = ko.observable('');
+	this.city = ko.observable('');
+	this.submitSuccess = ko.observable('Submission');
+};
+
+var ViewModel = function(){
+
+	var self = this;
+	self.geoLocation = new geoLocation();
+
+	self.showMap = function(){
+		console.log(self.geoLocation.streetAddress());
+		console.log('Success');
+	}
 };
 
 
-
-ko.applyBindings(myViewModel);
-
+ko.applyBindings(new ViewModel);

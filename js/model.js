@@ -54,12 +54,12 @@ function makeid()
 
     return text;
 }
-
-
+var counter = 0;
+function getYelpData(term) {
 var yelpUrl = "https://api.yelp.com/v2/search";
 var parameters = {
-    term: 'Big Jones',
-    location: 'Ravenswood Chicago',
+	term : term,
+    location: neighborhood.name,
     limit: 1,
     oauth_consumer_key: '6Chkx9mYhCssQqXHPxvNQQ',
     oauth_token: 'XQRWzlGQFGOlualvBLVTpJYi6EtszzBV',
@@ -73,6 +73,7 @@ var consumerSecret = '-J7YlB_RuZ7mfk3lxM8n0c3nT1s';
                         var signature = oauthSignature.generate('GET', yelpUrl, parameters, consumerSecret, tokenSecret, { encodeSignature: false});
                         parameters['oauth_signature'] = signature;
 
+
 var settings = {
 		      url: yelpUrl,
 		      data: parameters,
@@ -80,8 +81,13 @@ var settings = {
 		      jsonpCallback: 'cb',
 		      dataType: 'jsonp',
 		      success: function(results) {
+
 		        // Do stuff with results
 		        console.log(results);
+		        counter++;
+		        if(counter<geoLocations.length){
+		        	getYelpData(geoLocations[counter].name);
+		        }
 		      },
 		      error: function(error) {
 		        // Do stuff on fail
@@ -92,7 +98,10 @@ var settings = {
 $.ajax(settings);
 
 
+}
 
+
+getYelpData(geoLocations[0].name);
 
 function showYelpData(data){
 	console.log(data);
@@ -105,9 +114,6 @@ var geoLocation = function(data){
 	self.latitude = ko.observable(data.latitude);
 	self.streetAddress = ko.observable(data.streetAddress);
 	self.city = "Chicago, IL";
-	self.filterPlaceList = function(){
-		console.log('Success');
-	}
 };
 
 

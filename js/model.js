@@ -44,6 +44,60 @@ var geoLocations = [
 
 ]
 
+function makeid()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
+
+var yelpUrl = "https://api.yelp.com/v2/search";
+var parameters = {
+    term: 'Big Jones',
+    location: 'Ravenswood Chicago',
+    limit: 1,
+    oauth_consumer_key: '6Chkx9mYhCssQqXHPxvNQQ',
+    oauth_token: 'XQRWzlGQFGOlualvBLVTpJYi6EtszzBV',
+    oauth_nonce: makeid(),
+    oauth_timestamp: Math.floor(Date.now()/1000),
+    oauth_signature_method: 'HMAC-SHA1',
+    callback: 'cb'
+}
+var consumerSecret = '-J7YlB_RuZ7mfk3lxM8n0c3nT1s';
+                        var tokenSecret = 'D7t2lRihVRUyZrGh2gMRZqFLlQ8';
+                        var signature = oauthSignature.generate('GET', yelpUrl, parameters, consumerSecret, tokenSecret, { encodeSignature: false});
+                        parameters['oauth_signature'] = signature;
+
+var settings = {
+		      url: yelpUrl,
+		      data: parameters,
+		      cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
+		      jsonpCallback: 'cb',
+		      dataType: 'jsonp',
+		      success: function(results) {
+		        // Do stuff with results
+		        console.log(results);
+		      },
+		      error: function(error) {
+		        // Do stuff on fail
+		        console.log(error);
+		      }
+		    };
+
+$.ajax(settings);
+
+
+
+
+function showYelpData(data){
+	console.log(data);
+}
+
 var geoLocation = function(data){
 	var self=this;
 	self.name = ko.observable(data.name);

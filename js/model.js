@@ -56,12 +56,12 @@ var geoLocation = function(data){
 	}
 };
 
+
 var ViewModel = function(){
 
 	var self = this;
 
 	self.placeList = ko.observableArray([]);
-
 	self.filter=ko.observable('');
 
 	geoLocations.forEach(function(place){
@@ -71,10 +71,13 @@ var ViewModel = function(){
 	self.search = function(value) {
 		self.placeList.removeAll();
 		for(var i =0; i<geoLocations.length;i++){
-			if(self.geoLocations[i].name.toLowerCase().indexOf(value.toLowerCase()) >= 0){
+			if(self.geoLocations[i].name.toLowerCase().indexOf(value.toLowerCase()) == 0){
 				self.placeList.push(geoLocations[i]);
 			}
 		}
+		var updatedList = self.placeList();
+		removeMarkers();
+		initializeMarkers(updatedList);
 	}
 
 self.filter.subscribe(self.search);

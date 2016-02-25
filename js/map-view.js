@@ -1,4 +1,11 @@
-var contentString = '<div id="content">Hello Shamyleeeeee!</div>';
+/*var contentString = '<div id="content">Hello Shamyleeeeee!</div>';*/
+
+function createInfoWindowContent(geoLocation){
+	var contentString = '<div id="info-title">' + geoLocation.name + '</div>' +
+	'<div id="info-category">' + geoLocation.categories[0][0] + '</div>';
+
+	return contentString;
+}
 
 var map;
 var markerArray = [];
@@ -22,7 +29,7 @@ var markerArray = [];
     })
         markerArray.push(marker);
   	};
-  		initializeInfoWindows(markerArray)
+  		/*initializeInfoWindows(markerArray)*/
 
       }
 
@@ -30,14 +37,13 @@ var markerArray = [];
       	for(var i=0;i<markers.length;i++){
   			var infowindow = new google.maps.InfoWindow(
   			{
-    			content: contentString,
+    			content: createInfoWindowContent(geoLocations[i]),
     			position: markers[i].position
   			});
 
   			markers[i].addListener('click', function(infowindowCopy){
   				return function(){
   				infowindowCopy.open(map,markers[i]);
-  				console.log(infowindowCopy);
   			}
   			}(infowindow));
 

@@ -105,16 +105,20 @@ $.ajax(settings);
 
 
 getYelpData(geoLocations[0].name);
+var categories = [];
 var index = 0;
 function storeYelpData(results){
-	var categories = ko.observableArray(results.businesses[0].categories);
+	categories = results.businesses[0].categories;
 	addCategoryToGeoLocation(geoLocations[index], categories);
 	index++
+	if(index >= geoLocations.length){
+		initializeInfoWindows(markerArray);
+	}
 }
 
 function addCategoryToGeoLocation(geoLocation, categories){
 	geoLocation['categories'] = categories;
-	console.log(geoLocation);
+	console.log(geoLocation.categories[0][0]);
 }
 
 var geoLocation = function(data){
@@ -133,6 +137,7 @@ var ViewModel = function(){
 
 	self.placeList = ko.observableArray([]);
 	self.filter=ko.observable('');
+	self.categories = ko
 
 	geoLocations.forEach(function(place){
 		self.placeList.push(new geoLocation(place));
@@ -141,7 +146,7 @@ var ViewModel = function(){
 	self.search = function(value) {
 		self.placeList.removeAll();
 		for(var i =0; i<geoLocations.length;i++){
-			if(self.geoLocations[i].name.toLowerCase().indexOf(value.toLowerCase()) == 0){
+			if(geoLocations[i].name.toLowerCase().indexOf(value.toLowerCase()) == 0){
 				self.placeList.push(geoLocations[i]);
 			}
 		}

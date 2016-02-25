@@ -1,11 +1,11 @@
-/*var contentString = '<div id="content">Hello Shamyleeeeee!</div>';*/
+var contentString = '<div id="content">Hello Shamyleeeeee!</div>';
 
-function createInfoWindowContent(geoLocation){
+/*function createInfoWindowContent(geoLocation){
 	var contentString = '<div id="info-title">' + geoLocation.name + '</div>' +
 	'<div id="info-category">' + geoLocation.categories[0][0] + '</div>';
 
 	return contentString;
-}
+}*/
 
 var map;
 var markerArray = [];
@@ -29,23 +29,25 @@ var markerArray = [];
     })
         markerArray.push(marker);
   	};
-  		/*initializeInfoWindows(markerArray)*/
+  		initializeInfoWindows(markerArray)
 
       }
 
       function initializeInfoWindows(markers){
-      	for(var i=0;i<markers.length;i++){
+
   			var infowindow = new google.maps.InfoWindow(
   			{
-    			content: createInfoWindowContent(geoLocations[i]),
-    			position: markers[i].position
+    			content: contentString,
   			});
 
-  			markers[i].addListener('click', function(infowindowCopy){
+  			for(var i=0;i<markers.length;i++){
+  			markers[i].addListener('click', function(infowindowCopy, marker){
+
   				return function(){
-  				infowindowCopy.open(map,markers[i]);
+  				infowindowCopy.setPosition(marker.position);
+  				infowindowCopy.open(map,marker);
   			}
-  			}(infowindow));
+  			}(infowindow, markers[i]));
 
    	   }
   }

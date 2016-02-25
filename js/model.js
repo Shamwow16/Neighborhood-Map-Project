@@ -45,14 +45,15 @@ var geoLocations = [
 ]
 
 var geoLocation = function(data){
-	/*this.personName = ko.observable('Bob');
-	this.personAge = ko.observable(123);*/
 	var self=this;
 	self.name = ko.observable(data.name);
 	self.longitude = ko.observable(data.longitude);
 	self.latitude = ko.observable(data.latitude);
 	self.streetAddress = ko.observable(data.streetAddress);
 	self.city = "Chicago, IL";
+	self.filterPlaceList = function(){
+		console.log('Success');
+	}
 };
 
 var ViewModel = function(){
@@ -60,15 +61,26 @@ var ViewModel = function(){
 	var self = this;
 
 	self.placeList = ko.observableArray([]);
+
+	self.filter=ko.observable('');
+
 	geoLocations.forEach(function(place){
 		self.placeList.push(new geoLocation(place));
-	})
-	console.log(self.placeList());
-	self.showMap = function(){
-		console.log(self.geoLocation.streetAddress());
-		console.log('Success');
+	});
+
+	self.search = function(value) {
+		self.placeList.removeAll();
+		for(var i =0; i<geoLocations.length;i++){
+			if(self.geoLocations[i].name.toLowerCase().indexOf(value.toLowerCase()) >= 0){
+				self.placeList.push(geoLocations[i]);
+			}
+		}
 	}
+
+self.filter.subscribe(self.search);
+
 };
+
 
 
 ko.applyBindings(new ViewModel);

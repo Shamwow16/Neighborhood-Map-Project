@@ -54,7 +54,10 @@ function makeid()
 
     return text;
 }
+
+
 var counter = 0;
+var yelpLocations = [];
 function getYelpData(term) {
 var yelpUrl = "https://api.yelp.com/v2/search";
 var parameters = {
@@ -83,7 +86,7 @@ var settings = {
 		      success: function(results) {
 
 		        // Do stuff with results
-		        console.log(results);
+		        storeYelpData(results);
 		        counter++;
 		        if(counter<geoLocations.length){
 		        	getYelpData(geoLocations[counter].name);
@@ -102,9 +105,16 @@ $.ajax(settings);
 
 
 getYelpData(geoLocations[0].name);
+var index = 0;
+function storeYelpData(results){
+	var categories = results.businesses[0].categories;
+	addCategoryToGeoLocation(geoLocations[index], categories);
+	index++
+}
 
-function showYelpData(data){
-	console.log(data);
+function addCategoryToGeoLocation(geoLocation, categories){
+	geoLocation['categories'] = categories;
+	console.log(geoLocation);
 }
 
 var geoLocation = function(data){

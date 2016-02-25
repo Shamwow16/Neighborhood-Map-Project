@@ -1,3 +1,4 @@
+var contentString = '<div id="content">Hello Shamyleeeeee!</div>';
 
 var map;
 var markerArray = [];
@@ -21,17 +22,29 @@ var markerArray = [];
     })
         markerArray.push(marker);
   	};
+  		initializeInfoWindows(markerArray)
+
       }
 
-      function updateMarkers(){
-      	for(var i=0; i<placeList().length ; i++){
-        var marker = new google.maps.Marker({
-    	position: {lat:placeList()[i].latitude(), lng:placeList()[i].longitude()},
-    	map: map,
-    	title: placeList()[i].name()
-    })
-  	};
-    }
+      function initializeInfoWindows(markers){
+      	for(var i=0;i<markers.length;i++){
+  			var infowindow = new google.maps.InfoWindow(
+  			{
+    			content: contentString,
+    			position: markers[i].position
+  			});
+
+  			markers[i].addListener('click', function(infowindowCopy){
+  				return function(){
+  				infowindowCopy.open(map,markers[i]);
+  				console.log(infowindowCopy);
+  			}
+  			}(infowindow));
+
+   	   }
+  }
+
+
 
     	function removeMarkers(){
     		for(var i = 0; i<markerArray.length;i++){

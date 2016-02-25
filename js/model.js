@@ -107,7 +107,7 @@ $.ajax(settings);
 getYelpData(geoLocations[0].name);
 var index = 0;
 function storeYelpData(results){
-	var categories = results.businesses[0].categories;
+	var categories = ko.observableArray(results.businesses[0].categories);
 	addCategoryToGeoLocation(geoLocations[index], categories);
 	index++
 }

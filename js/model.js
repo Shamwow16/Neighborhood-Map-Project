@@ -5,24 +5,24 @@ var neighborhood = {
 }
 
 var geoLocations = [
-	{
-		name:'Big Jones',
-		latitude: 41.979444,
-		longitude:-87.668036,
-		streetAddress: "5347 N Clark St"},
+{
+	name:'Big Jones',
+	latitude: 41.979444,
+	longitude:-87.668036,
+	streetAddress: "5347 N Clark St"},
 	{
 		name:'Old Town School of Folk Music',
 		latitude: 41.964223 ,
 		longitude: -87.686013 ,
 		streetAddress: "4544 North Lincoln Avenue"
-					},
+	},
 	{
 		name:'Riviera Theatre',
 		latitude: 41.968852 ,
 		longitude: -87.659878,
 		streetAddress: "4746 N Racine Ave"
 
-					},
+	},
 	{
 		name:"Mariano's",
 		latitude: 41.969294,
@@ -42,105 +42,139 @@ var geoLocations = [
 		streetAddress: "5022 N Clark St"
 	}
 
-]
+	]
 
-function makeid()
-{
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	function makeid()
+	{
+		var text = "";
+		var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    for( var i=0; i < 5; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
+		for( var i=0; i < 5; i++ )
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
 
-    return text;
-}
-
-
-var counter = 0;
-var yelpLocations = [];
-function getYelpData(term) {
-var yelpUrl = "https://api.yelp.com/v2/search";
-var parameters = {
-	term : term,
-    location: neighborhood.name,
-    limit: 1,
-    oauth_consumer_key: '6Chkx9mYhCssQqXHPxvNQQ',
-    oauth_token: 'XQRWzlGQFGOlualvBLVTpJYi6EtszzBV',
-    oauth_nonce: makeid(),
-    oauth_timestamp: Math.floor(Date.now()/1000),
-    oauth_signature_method: 'HMAC-SHA1',
-    callback: 'cb'
-}
-var consumerSecret = '-J7YlB_RuZ7mfk3lxM8n0c3nT1s';
-                        var tokenSecret = 'D7t2lRihVRUyZrGh2gMRZqFLlQ8';
-                        var signature = oauthSignature.generate('GET', yelpUrl, parameters, consumerSecret, tokenSecret, { encodeSignature: false});
-                        parameters['oauth_signature'] = signature;
+		return text;
+	}
 
 
-var settings = {
-		      url: yelpUrl,
-		      data: parameters,
-		      cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
-		      jsonpCallback: 'cb',
+	var counter = 0;
+	var yelpLocations = [];
+	function getYelpData(term) {
+		var yelpUrl = "https://api.yelp.com/v2/search";
+		var parameters = {
+			term : term,
+			location: neighborhood.name,
+			limit: 1,
+			oauth_consumer_key: '6Chkx9mYhCssQqXHPxvNQQ',
+			oauth_token: 'XQRWzlGQFGOlualvBLVTpJYi6EtszzBV',
+			oauth_nonce: makeid(),
+			oauth_timestamp: Math.floor(Date.now()/1000),
+			oauth_signature_method: 'HMAC-SHA1',
+			callback: 'cb'
+		}
+		var consumerSecret = '-J7YlB_RuZ7mfk3lxM8n0c3nT1s';
+		var tokenSecret = 'D7t2lRihVRUyZrGh2gMRZqFLlQ8';
+		var signature = oauthSignature.generate('GET', yelpUrl, parameters, consumerSecret, tokenSecret, { encodeSignature: false});
+		parameters['oauth_signature'] = signature;
+
+
+		var settings = {
+			url: yelpUrl,
+			data: parameters,
+		      cache: true,
 		      dataType: 'jsonp',
 		      success: function(results) {
-
-		        // Do stuff with results
-		       /* storeYelpData(results);*/
 		        yelpData.push(results);
 		        counter++;
 		        if(counter<geoLocations.length){
 		        	getYelpData(geoLocations[counter].name);
+
 		        }
-		      },
-		      error: function(error) {
+		    },
+		    error: function(error) {
 		        // Do stuff on fail
 		        console.log(error);
-		      }
-		    };
+		    }
+		};
 
-$.ajax(settings);
-
-
-}
-
-var yelpData = [];
-getYelpData(geoLocations[0].name);
+		$.ajax(settings);
 
 
-console.log(yelpData);
+	}
 
-function addCategoryToGeoLocation(geoLocation, categories){
-	geoLocation['categories'] = categories;
-	console.log(geoLocation.categories[0][0]);
-}
+	var yelpData = [];
+	getYelpData(geoLocations[0].name);
 
-var geoLocation = function(data){
-	var self=this;
-	self.name = ko.observable(data.name);
-	self.longitude = ko.observable(data.longitude);
-	self.latitude = ko.observable(data.latitude);
-	self.streetAddress = ko.observable(data.streetAddress);
-	self.city = "Chicago, IL";
-};
+	function getInfoWindowContent(marker){
+		for(var i=0;i<yelpData.length;i++){
+			if(yelpData[i].businesses[0].name == marker.title){
+				console.log(yelpData[i].businesses[0].id);
+				infowindow.setContent(yelpData[i].businesses[0].id);
+			}
+		};
+	}
+
+	function setInfoWindowContent(){};
 
 
-var ViewModel = function(){
 
-	var self = this;
+	var geoLocation = function(data){
+		var self=this;
+		self.name = ko.observable(data.name);
+		self.longitude = ko.observable(data.longitude);
+		self.latitude = ko.observable(data.latitude);
+		self.streetAddress = ko.observable(data.streetAddress);
+		self.city = "Chicago, IL";
+	};
 
-	self.placeList = ko.observableArray([]);
-	self.filter=ko.observable('');
-	/*self.yelpData = ko.observableArray(yelpData);
-	console.log(self.yelpData())*/;
+var updatedList = [];
+	var ViewModel = function(){
 
+		var self = this;
+
+		//FIX THE FILTERING WHEN YOU COME BACK THIS WEEKENDDDDD!!!!!
+
+		self.filter=ko.observable('');
+		self.locationsList = ko.observableArray(geoLocations);
+		self.filterLocationList = ko.computed(function(){
+			var search = self.filter().toLowerCase();
+			return ko.utils.arrayFilter(self.locationsList(), function(geoLocation){
+				return geoLocation.name.toLowerCase().indexOf(search) == 0;
+			});
+
+		}, this)
+
+		if(map==null){
+		initMap(self.locationsList());
+		}
+		/*self.filterList = ko.computed(function(){
+			if(self.filter() == ''){
+				for(var i =0;i<geoLocations.length;i++){
+					self.locationsList().push(new geoLocation(geoLocations[i]));
+				}
+			}
+
+			if (self.filter() != ''){
+			self.locationsList([]);
+			for(var i =0; i<geoLocations.length;i++){
+				if(geoLocations[i].name.toLowerCase().indexOf(self.filter().toLowerCase()) == 0){
+					self.locationsList().push(geoLocations[i]);
+				}
+			}
+			removeMarkers();
+
+			}
+			return self.locationsList;
+*/
+
+	/*if(self.placeList([])){
 	geoLocations.forEach(function(place){
 		self.placeList.push(new geoLocation(place));
 	});
+}*/
 
 
 
-	self.search = function(value) {
+/*	self.search = function(value) {
 		self.placeList.removeAll();
 		for(var i =0; i<geoLocations.length;i++){
 			if(geoLocations[i].name.toLowerCase().indexOf(value.toLowerCase()) == 0){
@@ -152,11 +186,10 @@ var ViewModel = function(){
 		initializeMarkers(updatedList);
 	}
 
-self.filter.subscribe(self.search);
-
-this.yelpData = ko.observableArray(yelpData);
-
+	self.filter.subscribe(self.search);*/
 };
+
+
 
 
 

@@ -21,32 +21,42 @@
 
 <div id="wrapper">
         <!-- Sidebar -->
-        <div id="sidebar-wrapper" data-bind="with:ViewModel">
+        <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
                         My Swaggy Neighborhood
                 </li>
                 <li>
                     <input id="filter-input" placeholder="Search your neighborhood" data-bind="value: filter, valueUpdate:'keyup'" type="text"></input>
-                    <div class="btn-group">
-                    <button id="filter-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
-                    <div class="dropdown-menu">
-                      Filter By
-                      <a class="dropdown-item" href="#">Type of Place</a>
-                      <a class="dropdown-item" href="#">Distance</a>
-                    </div>
-                    </div>
+
+                   <!--  <div class="btn-group">
+                   <button id="filter-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
+                   <div class="dropdown-menu">
+                     Filter By
+                     <a class="dropdown-item" href="#">Type of Place</a>
+                     <a class="dropdown-item" href="#">Distance</a>
+                   </div>
+                   </div> -->
                 </li>
-                <!-- ko foreach: placeList -->
-                <li class="location-item-padding location-item-margin">
-                    <a href="#" data-bind="text:$data.name"></a>
-                </li>
-                <!-- /ko -->
             </ul>
+            <br><br><br><br><br><br><br><br><br>
+            <ul data-bind="template: {name:'locations', foreach:filterLocationList}">
+            </ul>
+
+            <script type="text/html" id="locations">
+                <li class="location-item-padding location-item-margin">
+                    <span data-bind="text:name"></span>
+                </li>
+            </script>
+
         </div>
 	<div id="map"></div>
 
+ <!--  <div data-bind="template: {name: 'infowindow-template', data:yelpData}">Category:</div>
+ <p id="infowindow-template"><span data-bind="text:yelpData"></span></p> -->
+
 </body>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -56,10 +66,11 @@
 
     <script src="js/lib/knockout-3.2.0.js"></script>
     <script src="https://rawgit.com/bettiolo/oauth-signature-js/master/dist/oauth-signature.min.js"></script>
-    <script src="js/model.js"></script>
     <script src="js/map-view.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&callback=initMap"
-    async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE"></script>
+    <script src="js/model.js"></script>
+
+
 
 
 

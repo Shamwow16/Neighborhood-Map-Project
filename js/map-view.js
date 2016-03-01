@@ -8,9 +8,9 @@ var contentString = '<div id="content">Hello Shamyleeeeee!</div>';
 }*/
 
 var map;
-var infowindow;
+/*var infowindow;*/
 var markerArray = [];
-      function initMap(locations) {
+      function initMap() {
 
         map = new google.maps.Map(document.getElementById('map'), {
 
@@ -18,10 +18,10 @@ var markerArray = [];
           zoom: 14
         });
 
-       	initializeMarkers(locations);
+       	/*initializeMarkers(locations);*/
       }
 
-      function initializeMarkers(locations){
+      /*function initializeMarkers(locations){
       	for(var i=0; i<locations.length ; i++){
         var marker = new google.maps.Marker({
     	position: {lat:locations[i].latitude, lng:locations[i].longitude},
@@ -32,38 +32,33 @@ var markerArray = [];
   	};
   		initializeInfoWindows(markerArray)
 
-      }
+      }*/
 
 var selectedMarker;
-      function initializeInfoWindows(markers){
+      function initializeInfoWindow(infowindow, place){
 
-  			infowindow = new google.maps.InfoWindow(
+  		/*	infowindow = new google.maps.InfoWindow(
   			{
     			content: contentString,
-  			});
+  			});*/
 
-  			for(var i=0;i<markers.length;i++){
-  			markers[i].addListener('click', function(infowindowCopy, marker){
+
+        place.marker.addListener('click', function(infowindowCopy, marker){
 
   				return function(){
-  				/*selectedMarker = ko.observable(marker);*/
-  				/*infowindowCopy.setContent(marker.title);*/
-  				/*console.log(marker);*/
-  				getInfoWindowContent(marker);
+  				getInfoWindowContent(infowindowCopy,marker);
   				infowindowCopy.setPosition(marker.position);
   				infowindowCopy.open(map,marker);
   			}
-  			}(infowindow, markers[i]));
+  			}(infowindow,place.marker));
 
-   	   }
+
   }
 
 
 
-    	function removeMarkers(){
-    		for(var i = 0; i<markerArray.length;i++){
-    			markerArray[i].setMap(null);
-    		}
+    	function removeMarker(marker){
+    		marker.setMap(null);
     	}
 
 

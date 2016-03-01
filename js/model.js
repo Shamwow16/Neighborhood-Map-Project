@@ -104,7 +104,7 @@ var geoLocations = [
 	var yelpData = [];
 	getYelpData(geoLocations[0].name);
 
-	function getInfoWindowContent(marker){
+	function getInfoWindowContent(infowindow,marker){
 		for(var i=0;i<yelpData.length;i++){
 			if(yelpData[i].businesses[0].name == marker.title){
 				console.log(yelpData[i].businesses[0].id);
@@ -124,28 +124,70 @@ var geoLocations = [
 		self.latitude = ko.observable(data.latitude);
 		self.streetAddress = ko.observable(data.streetAddress);
 		self.city = "Chicago, IL";
+		self.createMarker = function(){
+		self.marker = new google.maps.Marker({
+    			position: {lat:self.latitude(), lng:self.longitude()},
+    			map: map,
+    			title: self.name()
+    		})
+		};
+		/*self.setMarkerInfoWindow = function(){
+			self.
+		}*/
 	};
 
 var updatedList = [];
 	var ViewModel = function(){
 
 		var self = this;
-
-		//FIX THE FILTERING WHEN YOU COME BACK THIS WEEKENDDDDD!!!!!
-
+		if(map==null){
+		initMap();
+		}
+		self.infoWindow = new google.maps.InfoWindow();
+		self.setInfoWindowPosition = function(marker){
+			self.infoWindow.open(map,marker)
+			/*self.infoWindow.setPosition({lat:marker.latitude, lng:marker.longitude});*/
+		};
+		console.log(self.infoWindow);
 		self.filter=ko.observable('');
-		self.locationsList = ko.observableArray(geoLocations);
+		self.locationsList = ko.observableArray([]);
+		/*self.generateMarkers = function(){
+
+		}*/
+		geoLocations.forEach(function(place){
+			self.locationsList().push(new geoLocation(place));
+		})
+
+		self.locationsList().forEach(function(place){
+			place.createMarker();
+			initializeInfoWindow(self.infoWindow,place);
+		})
+
+
 		self.filterLocationList = ko.computed(function(){
 			var search = self.filter().toLowerCase();
 			return ko.utils.arrayFilter(self.locationsList(), function(geoLocation){
-				return geoLocation.name.toLowerCase().indexOf(search) == 0;
+
+				if (geoLocation.name().toLowerCase().indexOf(search) == 0){
+
+				geoLocation.marker.setMap(map);
+				/*self.setInfoWindowPosition(geoLocation.marker);*/
+				return true;
+				}
+
+				else{
+					removeMarker(geoLocation.marker)
+					return false;
+				}
+
 			});
+			self.locationsList(self.filterLocationList);
 
 		}, this)
 
-		if(map==null){
-		initMap(self.locationsList());
-		}
+
+
+
 		/*self.filterList = ko.computed(function(){
 			if(self.filter() == ''){
 				for(var i =0;i<geoLocations.length;i++){

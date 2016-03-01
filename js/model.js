@@ -58,60 +58,10 @@ var geoLocations = [
 
 	var counter = 0;
 	var yelpLocations = [];
-	function getYelpData(term) {
-		var yelpUrl = "https://api.yelp.com/v2/search";
-		var parameters = {
-			term : term,
-			location: neighborhood.name,
-			limit: 1,
-			oauth_consumer_key: '6Chkx9mYhCssQqXHPxvNQQ',
-			oauth_token: 'XQRWzlGQFGOlualvBLVTpJYi6EtszzBV',
-			oauth_nonce: makeid(),
-			oauth_timestamp: Math.floor(Date.now()/1000),
-			oauth_signature_method: 'HMAC-SHA1',
-			callback: 'cb'
-		}
-		var consumerSecret = '-J7YlB_RuZ7mfk3lxM8n0c3nT1s';
-		var tokenSecret = 'D7t2lRihVRUyZrGh2gMRZqFLlQ8';
-		var signature = oauthSignature.generate('GET', yelpUrl, parameters, consumerSecret, tokenSecret, { encodeSignature: false});
-		parameters['oauth_signature'] = signature;
-
-
-		var settings = {
-			url: yelpUrl,
-			data: parameters,
-		      cache: true,
-		      dataType: 'jsonp',
-		      success: function(results) {
-		        yelpData.push(results);
-		        counter++;
-		        if(counter<geoLocations.length){
-		        	getYelpData(geoLocations[counter].name);
-
-		        }
-		    },
-		    error: function(error) {
-		        // Do stuff on fail
-		        console.log(error);
-		    }
-		};
-
-		$.ajax(settings);
-
-
-	}
 
 	var yelpData = [];
-	getYelpData(geoLocations[0].name);
 
-	function getInfoWindowContent(infowindow,marker){
-		for(var i=0;i<yelpData.length;i++){
-			if(yelpData[i].businesses[0].name == marker.title){
-				console.log(yelpData[i].businesses[0].id);
-				infowindow.setContent(yelpData[i].businesses[0].id);
-			}
-		};
-	}
+
 
 	function setInfoWindowContent(){};
 
@@ -144,6 +94,9 @@ var updatedList = [];
 		initMap();
 		}
 		self.infoWindow = new google.maps.InfoWindow();
+		self.selectedLocationName = ko.observable('');
+		self.selectedLocationImageUrl = ko.observable('');
+		self.yelpDataArray = ko.observableArray([]);
 		self.setInfoWindowPosition = function(marker){
 			self.infoWindow.open(map,marker)
 			/*self.infoWindow.setPosition({lat:marker.latitude, lng:marker.longitude});*/
@@ -158,14 +111,81 @@ var updatedList = [];
 			self.locationsList().push(new geoLocation(place));
 		})
 
+		self.getYelpData = function(terms){
+		var yelpUrl = "https://api.yelp.com/v2/search";
+		var parameters = {
+			term : terms,
+			location: neighborhood.name,
+			limit: 1,
+			oauth_consumer_key: '6Chkx9mYhCssQqXHPxvNQQ',
+			oauth_token: 'XQRWzlGQFGOlualvBLVTpJYi6EtszzBV',
+			oauth_nonce: makeid(),
+			oauth_timestamp: Math.floor(Date.now()/1000),
+			oauth_signature_method: 'HMAC-SHA1',
+			callback: 'cb'
+		}
+		var consumerSecret = '-J7YlB_RuZ7mfk3lxM8n0c3nT1s';
+		var tokenSecret = 'D7t2lRihVRUyZrGh2gMRZqFLlQ8';
+		var signature = oauthSignature.generate('GET', yelpUrl, parameters, consumerSecret, tokenSecret, { encodeSignature: false});
+		parameters['oauth_signature'] = signature;
+
+
+		var settings = {
+			url: yelpUrl,
+			data: parameters,
+		      cache: true,
+		      dataType: 'jsonp',
+		      success: function(results) {
+		        self.yelpDataArray.push(results);
+		        counter++;
+		    },
+		    error: function(error) {
+		        // Do stuff on fail
+		        console.log(error);
+		    }
+		};
+
+		$.ajax(settings);
+
+		}
+
+		self.getInfoWindowContent = function(infowindow,marker){
+
+
+		for(var i=0;i<self.yelpDataArray().length;i++){
+			if(self.yelpDataArray()[i].businesses[0].name == marker.title){
+				self.selectedLocationName(self.yelpDataArray()[i].businesses[0].name);
+				self.selectedLocationImageUrl(self.yelpDataArray()[i].businesses[0].image_url);
+				var infoWindowContent = $('#infowindow-content').html();
+				infowindow.setContent(infoWindowContent);
+			}
+		};
+	}
+
+	  self.initializeInfoWindow = function(infowindow, place){
+
+        place.marker.addListener('click', function(infowindowCopy, marker){
+
+  				return function(){
+  				self.getInfoWindowContent(infowindowCopy,marker);
+  				infowindowCopy.setPosition(marker.position);
+  				infowindowCopy.open(map,marker);
+
+  			}
+  			}(self.infoWindow,place.marker));
+
+
+  		}
+
 		self.locationsList().forEach(function(place){
 			place.createMarker();
-			initializeInfoWindow(self.infoWindow,place);
+			self.getYelpData(place.name());
+			self.initializeInfoWindow(self.infoWindow,place);
 		})
 
 		self.showInfoWindowOnClick = function(element){
 			console.log(element.marker);
-			getInfoWindowContent(self.infoWindow,element.marker);
+			self.getInfoWindowContent(self.infoWindow,element.marker);
 			self.infoWindow.open(map,element.marker);
 		}
 
@@ -194,47 +214,7 @@ var updatedList = [];
 
 
 
-		/*self.filterList = ko.computed(function(){
-			if(self.filter() == ''){
-				for(var i =0;i<geoLocations.length;i++){
-					self.locationsList().push(new geoLocation(geoLocations[i]));
-				}
-			}
 
-			if (self.filter() != ''){
-			self.locationsList([]);
-			for(var i =0; i<geoLocations.length;i++){
-				if(geoLocations[i].name.toLowerCase().indexOf(self.filter().toLowerCase()) == 0){
-					self.locationsList().push(geoLocations[i]);
-				}
-			}
-			removeMarkers();
-
-			}
-			return self.locationsList;
-*/
-
-	/*if(self.placeList([])){
-	geoLocations.forEach(function(place){
-		self.placeList.push(new geoLocation(place));
-	});
-}*/
-
-
-
-/*	self.search = function(value) {
-		self.placeList.removeAll();
-		for(var i =0; i<geoLocations.length;i++){
-			if(geoLocations[i].name.toLowerCase().indexOf(value.toLowerCase()) == 0){
-				self.placeList.push(geoLocations[i]);
-			}
-		}
-		var updatedList = self.placeList();
-		removeMarkers();
-		initializeMarkers(updatedList);
-	}
-
-	self.filter.subscribe(self.search);*/
 };
 
 

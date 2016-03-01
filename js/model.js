@@ -78,9 +78,11 @@ var geoLocations = [
 		self.marker = new google.maps.Marker({
     			position: {lat:self.latitude(), lng:self.longitude()},
     			map: map,
+    			animation: google.maps.Animation.DROP,
     			title: self.name()
     		})
 		};
+
 		/*self.setMarkerInfoWindow = function(){
 			self.
 		}*/
@@ -182,11 +184,18 @@ var updatedList = [];
 
   				return function(){
   				self.getInfoWindowContent(infowindowCopy,marker);
+  				toggleBounce(marker);
   				infowindowCopy.setPosition(marker.position);
   				infowindowCopy.open(map,marker);
 
   			}
   			}(self.infoWindow,place.marker));
+
+        infowindow.addListener('closeclick',function(){
+        	if (place.marker.getAnimation() !== null) {
+   			 place.marker.setAnimation(null);
+   			}
+        });
 
 
   		}

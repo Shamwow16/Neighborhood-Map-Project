@@ -163,6 +163,12 @@ var updatedList = [];
 			initializeInfoWindow(self.infoWindow,place);
 		})
 
+		self.showInfoWindowOnClick = function(element){
+			console.log(element.marker);
+			getInfoWindowContent(self.infoWindow,element.marker);
+			self.infoWindow.open(map,element.marker);
+		}
+
 
 		self.filterLocationList = ko.computed(function(){
 			var search = self.filter().toLowerCase();

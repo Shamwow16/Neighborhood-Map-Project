@@ -52,9 +52,22 @@
         </div>
 	<div id="map"></div>
 
-    <div id="infowindow-content">
+    <div style="display: none" id="infowindow-content">
+        <div class="col-sm-12 text-center">
         <h2 data-bind="text:selectedLocationName()"></h2>
-        <img class=" text-center img-rounded" data-bind="attr:{src:selectedLocationImageUrl()}">
+        <h4 data-bind="text:selectedLocationAddress()"></h4>
+        <h3 data-bind="text:selectedLocationCategory()"></h3>
+        </div>
+        <div class="col-sm-6">
+        <img class="img-rounded" data-bind="attr:{src:selectedLocationImageUrl()}">
+        </div>
+        <div class="col-sm-6">
+        <h3>Rating:</h3>
+        <img class="img-rounded" data-bind="attr:{src:selectedLocationRatingUrl()}">
+        </div>
+        <div class="col-sm-12">
+        <p data-bind="text:selectedLocationSnippetText"></p><a target="_blank" data-bind="attr:{href:selectedLocationYelpUrl()}">See More</a>
+        </div>
     </div>
 </body>
 

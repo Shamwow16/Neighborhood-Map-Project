@@ -1,15 +1,14 @@
 <!DOCTYPE <!DOCTYPE html>
 <html>
+
 <head>
-
-  <meta name="viewport" content="initial-scale=1.0">
-	<title>Shamyle's Neighborhood Map</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>Shamyle's Neighborhood Map</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-
-
-<!-- <div class="row">
+    <!-- <div class="row">
 <div class="col-sm-12">
 <label>Enter Street Address:</label>
 <input class="input-field" id="address-input" type="text" placeholder="Street Address">
@@ -18,18 +17,16 @@
 <button class="btn-primary">Show My Swaggy Neighborhood</button>
 </div>
 </div> -->
-
-<div id="wrapper">
+    <div id="wrapper">
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
-                        My Swaggy Neighborhood
+                    My Swaggy Neighborhood
                 </li>
                 <li>
                     <input id="filter-input" placeholder="Search your neighborhood" data-bind="value: filter, valueUpdate:'keyup'" type="text"></input>
-
-                   <!--  <div class="btn-group">
+                    <!--  <div class="btn-group">
                    <button id="filter-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
                    <div class="dropdown-menu">
                      Filter By
@@ -39,55 +36,49 @@
                    </div> -->
                 </li>
             </ul>
-            <br><br><br><br><br><br><br><br><br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
             <ul data-bind="template: {name:'locations', foreach:filterLocationList}">
             </ul>
-
             <script type="text/html" id="locations">
                 <li class="location-item-padding location-item-margin">
                     <a data-bind="text:name, click:$parent.showInfoWindowOnClick"></a>
                 </li>
             </script>
-
         </div>
-	<div id="map"></div>
-
-    <div style="display: none" id="infowindow-content">
-        <div class="col-sm-12 text-center">
-        <h2 data-bind="text:selectedLocationName()"></h2>
-        <h4 data-bind="text:selectedLocationAddress()"></h4>
-        <h3 data-bind="text:selectedLocationCategory()"></h3>
+        <div id="map"></div>
+        <div style="display: none" id="infowindow-content">
+            <div class="col-sm-12 text-center">
+                <h2 data-bind="text:selectedLocationName()"></h2>
+                <h4 data-bind="text:selectedLocationAddress()"></h4>
+                <h3 data-bind="text:selectedLocationCategory()"></h3>
+            </div>
+            <div class="col-sm-6">
+                <img class="img-rounded" data-bind="attr:{src:selectedLocationImageUrl()}">
+            </div>
+            <div class="col-sm-6">
+                <h3>Rating:</h3>
+                <img class="img-rounded" data-bind="attr:{src:selectedLocationRatingUrl()}">
+            </div>
+            <div class="col-sm-12">
+                <p data-bind="text:selectedLocationSnippetText"></p><a target="_blank" data-bind="attr:{href:selectedLocationYelpUrl()}">See More</a>
+            </div>
         </div>
-        <div class="col-sm-6">
-        <img class="img-rounded" data-bind="attr:{src:selectedLocationImageUrl()}">
-        </div>
-        <div class="col-sm-6">
-        <h3>Rating:</h3>
-        <img class="img-rounded" data-bind="attr:{src:selectedLocationRatingUrl()}">
-        </div>
-        <div class="col-sm-12">
-        <p data-bind="text:selectedLocationSnippetText"></p><a target="_blank" data-bind="attr:{href:selectedLocationYelpUrl()}">See More</a>
-        </div>
-    </div>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&libraries=places"></script>
 </body>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
-
-
-    <script src="js/lib/knockout-3.2.0.js"></script>
-    <script src="https://rawgit.com/bettiolo/oauth-signature-js/master/dist/oauth-signature.min.js"></script>
-    <script src="js/map-view.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE"></script>
-    <script src="js/model.js"></script>
-
-
-
-
-
-
+<script src="js/lib/knockout-3.2.0.js"></script>
+<script src="https://rawgit.com/bettiolo/oauth-signature-js/master/dist/oauth-signature.min.js"></script>
+<script src="js/map-view.js"></script>
+<script src="js/model.js"></script>
 
 </html>

@@ -97,9 +97,7 @@ function setInfoWindowContent() {};
 		self.showInfoWindowOnClick = function(element){
 			console.log(element.marker);
 			self.getInfoWindowContent(self.infoWindow,element.marker);
-			toggleBounce(element.marker);
 			self.infoWindow.open(map,element.marker);
-
 		}
 =======
 		self.showInfoWindowOnClick = function(element){

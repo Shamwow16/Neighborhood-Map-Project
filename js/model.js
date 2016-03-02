@@ -90,8 +90,24 @@ var yelpData = [];
 
 
 
+<<<<<<< HEAD
 function setInfoWindowContent() {};
 
+||||||| 31b874e... Implement marker bounce on clicking list item
+		self.showInfoWindowOnClick = function(element){
+			console.log(element.marker);
+			self.getInfoWindowContent(self.infoWindow,element.marker);
+			toggleBounce(element.marker);
+			self.infoWindow.open(map,element.marker);
+
+		}
+=======
+		self.showInfoWindowOnClick = function(element){
+			console.log(element.marker);
+			self.getInfoWindowContent(self.infoWindow,element.marker);
+			self.infoWindow.open(map,element.marker);
+		}
+>>>>>>> parent of 31b874e... Implement marker bounce on clicking list item
 
 
 var geoLocation = function(data) {

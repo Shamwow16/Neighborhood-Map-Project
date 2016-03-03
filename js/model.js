@@ -113,7 +113,7 @@ function dataHasLoaded() {
 }
 
 
-function setInfoWindowContent() {};
+
 self.showInfoWindowOnClick = function(element) {
     console.log(element.marker);
     self.getInfoWindowContent(self.infoWindow, element.marker);
@@ -163,14 +163,9 @@ var ViewModel = function() {
     self.dataLoaded = ko.observable(false);
     self.setInfoWindowPosition = function(marker) {
         self.infoWindow.open(map, marker)
-            /*self.infoWindow.setPosition({lat:marker.latitude, lng:marker.longitude});*/
     };
     self.filter = ko.observable('');
     self.locationsList = ko.observableArray([]);
-    /* geoLocations.forEach(function(place) {
-     self.locationsList().push(new geoLocation(place));
- })
-*/
 
 
 
@@ -220,20 +215,23 @@ var ViewModel = function() {
 
     }
 
+    self.setInfoWindowContent = function(yelpDataItem) {
+        self.selectedLocation(yelpDataItem.businesses[0]);
+        self.selectedLocationName(self.selectedLocation().name);
+        self.selectedLocationCategory(self.selectedLocation().categories[0][0]);
+        self.selectedLocationImageUrl(self.selectedLocation().image_url);
+        self.selectedLocationRatingUrl(self.selectedLocation().rating_img_url);
+        self.selectedLocationSnippetText(self.selectedLocation().snippet_text);
+        self.selectedLocationYelpUrl(self.selectedLocation().url);
+        self.selectedLocationAddress(self.selectedLocation().location.display_address[0] + ', ' + self.selectedLocation().location.display_address[1] + ', ' +
+            self.selectedLocation().location.display_address[2]);
+    };
     self.getInfoWindowContent = function(infowindow, marker) {
 
 
         for (var i = 0; i < self.yelpDataArray().length; i++) {
             if (marker.marker_id == self.yelpDataArray()[i].businesses[0].place_id) {
-                self.selectedLocation(self.yelpDataArray()[i].businesses[0]);
-                self.selectedLocationName(self.selectedLocation().name);
-                self.selectedLocationCategory(self.selectedLocation().categories[0][0]);
-                self.selectedLocationImageUrl(self.selectedLocation().image_url);
-                self.selectedLocationRatingUrl(self.selectedLocation().rating_img_url);
-                self.selectedLocationSnippetText(self.selectedLocation().snippet_text);
-                self.selectedLocationYelpUrl(self.selectedLocation().url);
-                self.selectedLocationAddress(self.selectedLocation().location.display_address[0] + ', ' + self.selectedLocation().location.display_address[1] + ', ' +
-                    self.selectedLocation().location.display_address[2]);
+                self.setInfoWindowContent(self.yelpDataArray()[i]);
                 var infoWindowContent = $('#infowindow-content').html();
                 infowindow.setContent(infoWindowContent);
             }

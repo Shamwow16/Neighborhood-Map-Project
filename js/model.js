@@ -1,50 +1,45 @@
-/*var places = ko.observableArray([]);
- */
-
-/*$.ajax({
-  type: 'GET',
-  url:'https://maps.googleapis.com/maps/api/place/search/json',
-  dataType: 'jsonp',
-  data: {
-   'location' : '41.968667,-87.674609',
-   'radius' : 2000,
-   'key' : "AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE",
-   'keyword' : "hotel"
-   },*/
-/* success: function(hotel){*/
-/*places().push(hotel);*/
-/* console.log(hotel);
- }
-});
-*/
-
-
-
-
-/*self.places().forEach(function(place) {
-    self.locationsList().push(new geoLocation(place));
-})
-self.setMapContent();
-*/
-
 if (map == null) {
     initMap();
 }
+var searchedPlace = [];
+var locationLatLng;
+searchBox.addListener('places_changed', function() {
+    searchedPlace = searchBox.getPlaces();
+    if (searchedPlace.length == 0) {
+        return;
+    }
+    var position_lat = searchedPlace[0].geometry.location.lat();
+    var position_lng = searchedPlace[0].geometry.location.lng();
+    /*onsole.log(position);
+     */
+    locationLatLng = new google.maps.LatLng(position_lat, position_lng);
+    map.setCenter(new google.maps.LatLng(position_lat, position_lng));
+    request['location'] = locationLatLng;
+    placeService = new google.maps.places.PlacesService(map);
+    self.placeService.nearbySearch(request, placesCallback);
+    neighborhood.name = searchedPlace[0].address_components[0].short_name + searchedPlace[0].address_components[1].short_name + searchedPlace[0].address_components[2].short_name;
 
-var locationLatLng = new google.maps.LatLng(41.968667, -87.674609);
+})
+
+if (searchedPlace.length == 0) {
+    locationLatLng = new google.maps.LatLng(41.968667, -87.674609);
+}
+
+/*var locationLatLng = new google.maps.LatLng(41.968667, -87.674609);*/
 
 var request = {
     location: locationLatLng, //({lat:41.968667,lng: -87.674609})
-    radius: '1000',
-    type: 'restaurant'
+    radius: '2000',
+    type: 'restaurant',
+    rankby: 'distance'
 };
 
 var initialPlaces = [];
 
+
 function placesCallback(results, status) {
 
     if (status == google.maps.places.PlacesServiceStatus.OK) {
-        console.log(results);
         initialPlaces = results.slice(0, 10);
         dataLoaded(true);
     }
@@ -114,21 +109,19 @@ function dataHasLoaded() {
 
 
 
-self.showInfoWindowOnClick = function(element) {
+
+/*self.showInfoWindowOnClick = function(element) {
     console.log(element.marker);
     self.getInfoWindowContent(self.infoWindow, element.marker);
     self.infoWindow.open(map, element.marker);
 }
-self.showInfoWindowOnClick = function(element) {
-    console.log(element.marker);
-    self.getInfoWindowContent(self.infoWindow, element.marker);
-    self.infoWindow.open(map, element.marker);
-}
+*/
 
 
 var geoLocation = function(data) {
     var self = this;
     self.name = ko.observable(data.name);
+
     self.longitude = ko.observable(data.geometry.location.lng());
     self.latitude = ko.observable(data.geometry.location.lat());
     self.streetAddress = ko.observable(data.vicinity);
@@ -149,6 +142,7 @@ var updatedList = [];
 var ViewModel = function() {
 
     var self = this;
+    self.neighborhoodInput = ko.observable('');
     self.places = ko.observableArray([]);
     self.infoWindow = new google.maps.InfoWindow();
     self.selectedLocation = ko.observable('');
@@ -165,16 +159,14 @@ var ViewModel = function() {
         self.infoWindow.open(map, marker)
     };
     self.filter = ko.observable('');
-    self.locationsList = ko.observableArray([]);
 
 
 
-    console.log(self.locationsList());
-
-
-
-
-
+    self.showInfoWindowOnClick = function(element) {
+        console.log(element.marker);
+        self.getInfoWindowContent(self.infoWindow, element.marker);
+        self.infoWindow.open(map, element.marker);
+    }
     self.getYelpData = function(terms, place_id) {
         var yelpUrl = "https://api.yelp.com/v2/search";
         var parameters = {
@@ -215,6 +207,9 @@ var ViewModel = function() {
 
     }
 
+
+
+
     self.setInfoWindowContent = function(yelpDataItem) {
         self.selectedLocation(yelpDataItem.businesses[0]);
         self.selectedLocationName(self.selectedLocation().name);
@@ -226,17 +221,18 @@ var ViewModel = function() {
         self.selectedLocationAddress(self.selectedLocation().location.display_address[0] + ', ' + self.selectedLocation().location.display_address[1] + ', ' +
             self.selectedLocation().location.display_address[2]);
     };
+
     self.getInfoWindowContent = function(infowindow, marker) {
-
-
         for (var i = 0; i < self.yelpDataArray().length; i++) {
             if (marker.marker_id == self.yelpDataArray()[i].businesses[0].place_id) {
+                console.log(self.yelpDataArray()[i].businesses[0].name);
                 self.setInfoWindowContent(self.yelpDataArray()[i]);
                 var infoWindowContent = $('#infowindow-content').html();
+                console.log(infoWindowContent);
                 infowindow.setContent(infoWindowContent);
             }
         };
-    }
+    };
 
     self.initializeInfoWindow = function(infowindow, place) {
 
@@ -261,7 +257,9 @@ var ViewModel = function() {
     }
 
     self.setMapContent = function() {
+        self.yelpDataArray([]);
         self.places().forEach(function(place) {
+            console.log(place.streetAddress());
             place.createMarker();
             self.getYelpData(place.name(), place.place_id());
             self.initializeInfoWindow(self.infoWindow, place);
@@ -287,6 +285,10 @@ var ViewModel = function() {
 
         var search = self.filter().toLowerCase();
         if (dataLoaded() == true) {
+            self.places().forEach(function(place) {
+                removeMarker(place.marker);
+            });
+            self.places([]);
             dataLoaded(false);
             initialPlaces.forEach(function(place) {
                 self.places().push(new geoLocation(place));
@@ -311,7 +313,7 @@ var ViewModel = function() {
 
         })
 
-        self.locationsList(self.filterLocationList);
+
 
     }, this);
 

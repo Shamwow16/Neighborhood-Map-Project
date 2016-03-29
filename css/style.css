@@ -1,3 +1,8 @@
+li {
+    list-style: none;
+}
+
+
 /* MAP */
 
 #map {
@@ -151,6 +156,28 @@
 
 #infowindow-template {
     margin-left: 500px;
+}
+
+
+/* FILTER DROPDOWN MENU STYLING */
+
+
+/* .dropdown-menu-right {
+    right: 90 !important;
+} */
+
+.no-indent {
+    text-indent: 0 !important;
+    top: -8px;
+    /* width: 150px !important; */
+}
+
+.submenu {
+    width: 150px !important;
+}
+
+.submenu-items {
+    width: 300px !important;
 }
 
 

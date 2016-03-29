@@ -36,14 +36,22 @@
                 </li>
                 <li>
                     <input id="filter-input" placeholder="Search your neighborhood" data-bind="value: filter, valueUpdate:'keyup'" type="text"></input>
-                    <!--  <div class="btn-group">
-                   <button id="filter-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
-                   <div class="dropdown-menu">
-                     Filter By
-                     <a class="dropdown-item" href="#">Type of Place</a>
-                     <a class="dropdown-item" href="#">Distance</a>
-                   </div>
-                   </div> -->
+                    <div class="btn-group">
+                        <button id="filter-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
+                        <ul class="submenu dropdown-menu dropdown-menu-right">
+                            <li>Filter By</li>
+                            <li class="dropdown-item submenu">Categories
+                                <ul class="submenu-items">
+                                    <!-- ko foreach: categories -->
+                                    <div class="row">
+                                        <input class="col-sm-2" type="checkbox" data-bind=" checkedValue: $data, checked:$root.wantsCategory">
+                                        <li class=" col-sm-6 dropdown-item no-indent" data-bind="text:$data"></li>
+                                    </div>
+                                    <!-- /ko -->
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
             </ul>
             <br>

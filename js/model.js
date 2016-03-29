@@ -1,7 +1,7 @@
 if (map == null) {
     initMap();
 }
-var searchedPlace = [];
+/*var searchedPlace = [];
 var locationLatLng;
 searchBox.addListener('places_changed', function() {
     searchedPlace = searchBox.getPlaces();
@@ -12,7 +12,7 @@ searchBox.addListener('places_changed', function() {
     var position_lng = searchedPlace[0].geometry.location.lng();
     /*onsole.log(position);
      */
-    locationLatLng = new google.maps.LatLng(position_lat, position_lng);
+   /* locationLatLng = new google.maps.LatLng(position_lat, position_lng);
     map.setCenter(new google.maps.LatLng(position_lat, position_lng));
     request['location'] = locationLatLng;
     placeService = new google.maps.places.PlacesService(map);
@@ -23,27 +23,27 @@ searchBox.addListener('places_changed', function() {
 
 if (searchedPlace.length == 0) {
     locationLatLng = new google.maps.LatLng(41.968667, -87.674609);
-}
+}*/
 
 /*var locationLatLng = new google.maps.LatLng(41.968667, -87.674609);*/
 
-var request = {
+/*var request = {
     location: locationLatLng, //({lat:41.968667,lng: -87.674609})
-    radius: '2000',
+    radius: '1000',
     type: 'restaurant',
     rankby: 'distance'
 };
-
+*/
 var initialPlaces = [];
 
 
-function placesCallback(results, status) {
+/*function placesCallback(results, status) {
 
     if (status == google.maps.places.PlacesServiceStatus.OK) {
         initialPlaces = results.slice(0, 10);
         dataLoaded(true);
     }
-}
+}*/
 
 
 var geoLocations = [{
@@ -122,9 +122,11 @@ var geoLocation = function(data) {
     var self = this;
     self.name = ko.observable(data.name);
 
-    self.longitude = ko.observable(data.geometry.location.lng());
-    self.latitude = ko.observable(data.geometry.location.lat());
-    self.streetAddress = ko.observable(data.vicinity);
+    /*self.longitude = ko.observable(data.longitude);
+    self.latitude = ko.observable(data.latitude);*/
+    self.longitude = ko.observable(data.longitude);
+    self.latitude = ko.observable(data.latitude);
+    self.streetAddress = ko.observable(data.streetAddress);
     self.place_id = ko.observable(data.place_id);
     self.city = "Chicago, IL";
     self.createMarker = function() {
@@ -154,7 +156,10 @@ var ViewModel = function() {
     self.selectedLocationYelpUrl = ko.observable('');
     self.selectedLocationAddress = ko.observable('');
     self.yelpDataArray = ko.observableArray([]);
+    self.categories = ko.observableArray([]);
     self.dataLoaded = ko.observable(false);
+    self.selectedCategories = ko.observableArray([]);
+    self.wantsCategory = ko.observable(true);
     self.setInfoWindowPosition = function(marker) {
         self.infoWindow.open(map, marker)
     };
@@ -167,7 +172,7 @@ var ViewModel = function() {
         self.getInfoWindowContent(self.infoWindow, element.marker);
         self.infoWindow.open(map, element.marker);
     }
-    self.getYelpData = function(terms, place_id) {
+    self.getYelpData = function(terms) {
         var yelpUrl = "https://api.yelp.com/v2/search";
         var parameters = {
             term: terms,
@@ -193,8 +198,9 @@ var ViewModel = function() {
             dataType: 'jsonp',
             success: function(results) {
 
-                results.businesses[0].place_id = place_id;
+                /*results.businesses[0].place_id = place_id;*/
                 self.yelpDataArray.push(results);
+                self.categories.push(results.businesses[0].categories[0][0]);
                 counter++;
             },
             error: function(error) {
@@ -224,11 +230,9 @@ var ViewModel = function() {
 
     self.getInfoWindowContent = function(infowindow, marker) {
         for (var i = 0; i < self.yelpDataArray().length; i++) {
-            if (marker.marker_id == self.yelpDataArray()[i].businesses[0].place_id) {
-                console.log(self.yelpDataArray()[i].businesses[0].name);
+            if (marker.title == self.yelpDataArray()[i].businesses[0].name) {
                 self.setInfoWindowContent(self.yelpDataArray()[i]);
                 var infoWindowContent = $('#infowindow-content').html();
-                console.log(infoWindowContent);
                 infowindow.setContent(infoWindowContent);
             }
         };
@@ -256,27 +260,28 @@ var ViewModel = function() {
 
     }
 
+
+
     self.setMapContent = function() {
         self.yelpDataArray([]);
         self.places().forEach(function(place) {
             console.log(place.streetAddress());
             place.createMarker();
-            self.getYelpData(place.name(), place.place_id());
+            self.getYelpData(place.name());
             self.initializeInfoWindow(self.infoWindow, place);
         })
     }
 
 
     self.showInfoWindowOnClick = function(element) {
-        console.log(element.marker);
         self.getInfoWindowContent(self.infoWindow, element.marker);
         toggleBounce(element.marker);
         self.infoWindow.open(map, element.marker);
 
     }
 
-    self.placeService = new google.maps.places.PlacesService(map);
-    self.placeService.nearbySearch(request, placesCallback);
+    /*self.placeService = new google.maps.places.PlacesService(map);
+    self.placeService.nearbySearch(request, placesCallback);*/
 
     self.filterLocationList = ko.computed(function() {
 
@@ -284,17 +289,17 @@ var ViewModel = function() {
 
 
         var search = self.filter().toLowerCase();
-        if (dataLoaded() == true) {
+        /*if (dataLoaded() == true) {*/
             self.places().forEach(function(place) {
                 removeMarker(place.marker);
             });
             self.places([]);
             dataLoaded(false);
-            initialPlaces.forEach(function(place) {
+            geoLocations.forEach(function(place) {
                 self.places().push(new geoLocation(place));
             });
             self.setMapContent();
-        };
+        /*};*/
         return ko.utils.arrayFilter(self.places(), function(geoLocation) {
 
             if (geoLocation.name().toLowerCase().indexOf(search) == 0) {
@@ -320,5 +325,9 @@ var ViewModel = function() {
 
 }
 
-
+//Click function below prevents submenu from closing on random clicking in the dropdown menu
+$('.submenu').on('click', function(event) {
+    console.log("Boo");
+    event.stopPropagation();
+});
 ko.applyBindings(new ViewModel);

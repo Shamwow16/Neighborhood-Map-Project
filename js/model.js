@@ -73,14 +73,15 @@ var geoLocation = function(data) {
 
     /*self.longitude = ko.observable(data.longitude);
     self.latitude = ko.observable(data.latitude);*/
-    self.longitude = ko.observable(data.longitude);
-    self.latitude = ko.observable(data.latitude);
+   /* self.longitude = ko.observable(data.longitude);
+ self.latitude = ko.observable(data.latitude);
+*/
     self.streetAddress = ko.observable(data.streetAddress);
     self.place_id = ko.observable(data.place_id);
     self.city = "Chicago, IL";
-    self.createMarker = function() {
+    self.createMarker = function(latitude, longitude) {
         self.marker = new google.maps.Marker({
-            position: { lat: self.latitude(), lng: self.longitude() },
+            position: { lat: latitude, lng: longitude },
             map: map,
             animation: google.maps.Animation.DROP,
             title: self.name(),
@@ -123,10 +124,10 @@ var ViewModel = function() {
         self.getInfoWindowContent(self.infoWindow, element.marker);
         self.infoWindow.open(map, element.marker);
     }
-    self.getYelpData = function(terms) {
+    self.getYelpData = function(place) {
         var yelpUrl = "https://api.yelp.com/v2/search";
         var parameters = {
-            term: terms,
+            term: place.name(),
             location: neighborhood.name,
             limit: 1,
             oauth_consumer_key: '6Chkx9mYhCssQqXHPxvNQQ',
@@ -155,6 +156,8 @@ var ViewModel = function() {
 self.yelpDataArray()[counter].longitude = results.businesses[0].location.coordinate.longitude;
 */
                 console.log(self.yelpDataArray());
+                place.createMarker(results.businesses[0].location.coordinate.latitude, results.businesses[0].location.coordinate.longitude);
+                self.initializeInfoWindow(self.infoWindow, place);
                 self.categories.push(results.businesses[0].categories[0][0]);
                 counter++;
             },
@@ -215,24 +218,9 @@ self.yelpDataArray()[counter].longitude = results.businesses[0].location.coordin
 
     }
 
-    self.initializeMapContent = function() {
-        self.getYelpData(place.name());
-        self.places().forEach(function(place) {
-            self.getYelpData(place.name());
-            place.createMarker();
-            self.initializeInfoWindow(self.infoWindow, place);
-        })
-    }
-
     self.setMapContent = function() {
-        /*self.yelpDataArray([]);
-         */
         self.places().forEach(function(place) {
-            console.log(place.streetAddress());
-
-            self.getYelpData(place.name());
-            place.createMarker();
-            self.initializeInfoWindow(self.infoWindow, place);
+            self.getYelpData(place);
         })
     }
 
@@ -257,9 +245,6 @@ self.yelpDataArray()[counter].longitude = results.businesses[0].location.coordin
         return ko.utils.arrayFilter(self.places(), function(geoLocation) {
             if (self.yelpDataArray().length == self.places().length) {
                 if (geoLocation.name().toLowerCase().indexOf(search) == 0) {
-
-                    geoLocation.marker.setMap(map);
-                    /*self.setInfoWindowPosition(geoLocation.marker);*/
                     return true;
                 } else {
                     removeMarker(geoLocation.marker);

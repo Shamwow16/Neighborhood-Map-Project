@@ -1,49 +1,8 @@
 if (map == null) {
     initMap();
 }
-/*var searchedPlace = [];
-var locationLatLng;
-searchBox.addListener('places_changed', function() {
-    searchedPlace = searchBox.getPlaces();
-    if (searchedPlace.length == 0) {
-        return;
-    }
-    var position_lat = searchedPlace[0].geometry.location.lat();
-    var position_lng = searchedPlace[0].geometry.location.lng();
-    /*onsole.log(position);
-     */
-   /* locationLatLng = new google.maps.LatLng(position_lat, position_lng);
-    map.setCenter(new google.maps.LatLng(position_lat, position_lng));
-    request['location'] = locationLatLng;
-    placeService = new google.maps.places.PlacesService(map);
-    self.placeService.nearbySearch(request, placesCallback);
-    neighborhood.name = searchedPlace[0].address_components[0].short_name + searchedPlace[0].address_components[1].short_name + searchedPlace[0].address_components[2].short_name;
 
-})
-
-if (searchedPlace.length == 0) {
-    locationLatLng = new google.maps.LatLng(41.968667, -87.674609);
-}*/
-
-/*var locationLatLng = new google.maps.LatLng(41.968667, -87.674609);*/
-
-/*var request = {
-    location: locationLatLng, //({lat:41.968667,lng: -87.674609})
-    radius: '1000',
-    type: 'restaurant',
-    rankby: 'distance'
-};
-*/
 var initialPlaces = [];
-
-
-/*function placesCallback(results, status) {
-
-    if (status == google.maps.places.PlacesServiceStatus.OK) {
-        initialPlaces = results.slice(0, 10);
-        dataLoaded(true);
-    }
-}*/
 
 
 var geoLocations = [{
@@ -108,16 +67,6 @@ function dataHasLoaded() {
 }
 
 
-
-
-/*self.showInfoWindowOnClick = function(element) {
-    console.log(element.marker);
-    self.getInfoWindowContent(self.infoWindow, element.marker);
-    self.infoWindow.open(map, element.marker);
-}
-*/
-
-
 var geoLocation = function(data) {
     var self = this;
     self.name = ko.observable(data.name);
@@ -165,7 +114,9 @@ var ViewModel = function() {
     };
     self.filter = ko.observable('');
 
-
+    geoLocations.forEach(function(place) {
+        self.places().push(new geoLocation(place));
+    });
 
     self.showInfoWindowOnClick = function(element) {
         console.log(element.marker);
@@ -198,8 +149,12 @@ var ViewModel = function() {
             dataType: 'jsonp',
             success: function(results) {
 
-                /*results.businesses[0].place_id = place_id;*/
+
                 self.yelpDataArray.push(results);
+                /*self.yelpDataArray()[counter].latitude = results.businesses[0].location.coordinate.latitude;
+self.yelpDataArray()[counter].longitude = results.businesses[0].location.coordinate.longitude;
+*/
+                console.log(self.yelpDataArray());
                 self.categories.push(results.businesses[0].categories[0][0]);
                 counter++;
             },
@@ -260,14 +215,23 @@ var ViewModel = function() {
 
     }
 
-
+    self.initializeMapContent = function() {
+        self.getYelpData(place.name());
+        self.places().forEach(function(place) {
+            self.getYelpData(place.name());
+            place.createMarker();
+            self.initializeInfoWindow(self.infoWindow, place);
+        })
+    }
 
     self.setMapContent = function() {
-        self.yelpDataArray([]);
+        /*self.yelpDataArray([]);
+         */
         self.places().forEach(function(place) {
             console.log(place.streetAddress());
-            place.createMarker();
+
             self.getYelpData(place.name());
+            place.createMarker();
             self.initializeInfoWindow(self.infoWindow, place);
         })
     }
@@ -280,42 +244,32 @@ var ViewModel = function() {
 
     }
 
-    /*self.placeService = new google.maps.places.PlacesService(map);
-    self.placeService.nearbySearch(request, placesCallback);*/
 
     self.filterLocationList = ko.computed(function() {
-
-
-
-
         var search = self.filter().toLowerCase();
-        /*if (dataLoaded() == true) {*/
-            self.places().forEach(function(place) {
-                removeMarker(place.marker);
-            });
-            self.places([]);
-            dataLoaded(false);
-            geoLocations.forEach(function(place) {
-                self.places().push(new geoLocation(place));
-            });
+
+        /*self.places([]);
+         */
+        dataLoaded(false);
+        if (self.yelpDataArray().length == 0) {
             self.setMapContent();
-        /*};*/
+        }
         return ko.utils.arrayFilter(self.places(), function(geoLocation) {
+            if (self.yelpDataArray().length == self.places().length) {
+                if (geoLocation.name().toLowerCase().indexOf(search) == 0) {
 
-            if (geoLocation.name().toLowerCase().indexOf(search) == 0) {
+                    geoLocation.marker.setMap(map);
+                    /*self.setInfoWindowPosition(geoLocation.marker);*/
+                    return true;
+                } else {
+                    removeMarker(geoLocation.marker);
+                    return false;
+                }
 
-                geoLocation.marker.setMap(map);
-                /*self.setInfoWindowPosition(geoLocation.marker);*/
-                return true;
-            } else {
-                removeMarker(geoLocation.marker);
+
+
                 return false;
             }
-
-
-
-            return false;
-
         })
 
 

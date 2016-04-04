@@ -148,6 +148,8 @@ var ViewModel = function() {
                         self.categories.push(place.category);
                     }
 
+                    /*self.selectedCategories(self.categories());
+                     */
                     counter++;
                 },
                 error: function(error) {
@@ -286,15 +288,20 @@ var ViewModel = function() {
             if (self.yelpDataArray().length == 0) {
                 self.setMapContent();
             }
+            self.selectedPlaces = ko.observableArray(self.places());
 
-            return ko.utils.arrayFilter(self.places(), function(geoLocation) {
+            return ko.utils.arrayFilter(self.selectedPlaces(), function(geoLocation) {
 
                 if (self.yelpDataArray().length == self.places().length && geoLocation.marker != null) {
-                    if (geoLocation.name().toLowerCase().indexOf(search) == 0) {
-
+                    if (self.selectedCategories().indexOf(geoLocation.category) == -1 && self.selectedCategories().length > 0) {
+                        var index = self.selectedPlaces().indexOf(geoLocation);
+                        self.selectedPlaces().splice(index, 1);
+                        return false;
+                    } else if (geoLocation.name().toLowerCase().indexOf(search) == 0) {
+                        geoLocation.marker.setMap(map);
 
                         return true;
-                    } else {
+                    } else if (self.selectedCategories().length > 0 && self.selectedCategories().indexOf(geoLocation.category) == -1) {
                         removeMarker(geoLocation.marker);
                         return false;
                     }
@@ -303,7 +310,7 @@ var ViewModel = function() {
 
 
 
-                    return false;
+
                 }
 
             })

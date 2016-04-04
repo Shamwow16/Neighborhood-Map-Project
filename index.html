@@ -42,10 +42,10 @@
                             <li>Filter By</li>
                             <li class="dropdown-item submenu">Categories
                                 <ul class="submenu-items">
-                                    <!-- ko foreach: filteredCategories -->
+                                    <!-- ko foreach: categories -->
                                     <div class="row">
-                                        <input class="col-sm-2" type="checkbox" data-bind="checked: $root.selectedCategories,checkedValue:$data">
-                                        <p class=" col-sm-6 dropdown-item no-indent" data-bind="text:$data"></p>
+                                        <input class="col-sm-2" type="checkbox" data-bind=" checkedValue: $data, checked:$root.wantsCategory">
+                                        <li class=" col-sm-6 dropdown-item no-indent" data-bind="text:$data"></li>
                                     </div>
                                     <!-- /ko -->
                                 </ul>

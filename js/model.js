@@ -7,31 +7,19 @@ var initialPlaces = [];
 
 var geoLocations = [{
         name: 'Big Jones'
-    }, {
-        name: 'Old Town School of Folk Music'
-    }, {
-        name: 'Riviera Theatre'
-
-    }, {
-        name: "Mariano's"
-    }, {
-        name: "Montrose Beach"
-    }, {
-        name: "The Bongo Room"
-    }, {
-        name: "Pastoral"
-    }, {
-        name: "Taste of Lebanon"
-    }, {
-        name: "Reza's"
-    }, {
-        name: "T-Mobile"
-    }, {
-        name: "LA Fitness"
-    }, {
-        name: "Spacca Napoli"
-    }
-
+    },
+    { name: "Mariano's" },
+    { name: "T-Mobile" },
+    { name: "Taste of Lebanon" },
+    { name: "Foster Avenue Beach" },
+    { name: "Pastoral" },
+    { name: "Riviera" },
+    { name: "Aroy Thai" },
+    { name: "LA Fitness" },
+    { name: "Primo Chuki's" },
+    { name: "Green Mill" },
+    { name: "CVS" },
+    { name: "Babylon" }
 ]
 
 function makeid() {
@@ -96,6 +84,7 @@ var ViewModel = function() {
         self.selectedLocationAddress = ko.observable('');
         self.yelpDataArray = ko.observableArray([]);
         self.categories = ko.observableArray([]);
+        self.categoryArray = ko.observableArray([]);
         self.dataLoaded = ko.observable(false);
         self.selectedCategories = ko.observableArray([]);
         self.wantsCategory = ko.observable(true);
@@ -139,20 +128,25 @@ var ViewModel = function() {
                 dataType: 'jsonp',
                 success: function(results) {
 
-
+                    place.category = results.businesses[0].categories[0][0];
+                    self.categoryArray().push(place.category);
                     self.yelpDataArray.push(results);
                     place.createMarker(results.businesses[0].location.coordinate.latitude, results.businesses[0].location.coordinate.longitude, results.businesses[0].id);
                     self.initializeInfoWindow(self.infoWindow, place);
-                    place.category = results.businesses[0].categories[0][0];
+
+                    console.log(self.categoryArray().length);
                     if (self.categories().indexOf(place.category) == -1) {
+
                         self.categories.push(place.category);
                     }
 
                     counter++;
+
                 },
                 error: function(error) {
                     // Do stuff on fail
                     console.log(error);
+                    console.log("Not found!");
                 }
             };
 
@@ -250,7 +244,6 @@ var ViewModel = function() {
 
 
                     if (selectedCategory != place.category && self.selectedCategories().indexOf(place.category) == -1) {
-
                         removeMarker(place.marker);
                         /* removeMarker(geoLocation.marker);*/
                         return false;
@@ -268,6 +261,10 @@ var ViewModel = function() {
 
                 });
             });
+
+            self.selectedPlaces = ko.observableArray(self.places());
+
+
 
             if (selectedCategories.length == 0) {
                 self.places().forEach(function(place) {
@@ -287,26 +284,73 @@ var ViewModel = function() {
                 self.setMapContent();
             }
 
-            return ko.utils.arrayFilter(self.places(), function(geoLocation) {
+            if (self.categoryArray().length == self.places().length) {
 
-                if (self.yelpDataArray().length == self.places().length && geoLocation.marker != null) {
-                    if (geoLocation.name().toLowerCase().indexOf(search) == 0) {
+                return ko.utils.arrayFilter(self.places(), function(geoLocation) {
+                    var isCategorySelected = false;
+                    if (self.selectedCategories().length > 0) {
+                        console.log(self.selectedCategories().length);
+                        for (var i = 0; i < self.selectedCategories().length; i++) {
+                            if (geoLocation.category == self.selectedCategories()[i]) {
+                                isCategorySelected = true;
+                                geoLocation.selected(true);
+                                /*return true;
+                                 */
+
+                            }
+                        }
+
+                        if (search === "" && !isCategorySelected) {
+                            return false;
+                        }
 
 
-                        return true;
-                    } else {
-                        removeMarker(geoLocation.marker);
-                        return false;
+
                     }
 
 
+                    if (geoLocation.category != null && geoLocation.marker != null) {
+                        /*return ko.utils.arrayFilter(self.categories(), function(category) {*/
 
 
+                        /*if (geoLocation.category == category) {
+                         */
+                        if (geoLocation.name().toLowerCase().indexOf(search) == 0 && search != "" && isCategorySelected) {
+                            geoLocation.marker.setMap(map);
+                            return true;
+                        }
+
+                        if (search === "" && isCategorySelected) {
+                            geoLocation.marker.setMap(map);
+
+                            return true;
+                        }
+
+
+                        if (geoLocation.name().toLowerCase().indexOf(search) == 0 && self.selectedCategories().length == 0) {
+                            geoLocation.marker.setMap(map);
+
+                            return true;
+                        }
+
+
+
+
+
+
+                        /*}*/
+
+                        /* })
+                         */
+                        removeMarker(geoLocation.marker);
+
+
+                    }
 
                     return false;
-                }
 
-            })
+                })
+            }
 
 
 

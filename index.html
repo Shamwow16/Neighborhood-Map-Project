@@ -17,12 +17,12 @@
 <button class="btn-primary">Show My Swaggy Neighborhood</button>
 </div>
 </div> -->
-    <div class="container" id="title">
+    <div id="title">
         <div class="row">
-            <div class="col-sm-offset-3 col-sm-6">
+            <div class="col-sm-6 text-center">
                 <h2>Search your hood!</h2>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-offset-1 col-sm-4">
                 <div class="btn-group">
                     <button id="filter-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
                     <ul class="submenu dropdown-menu dropdown-menu-right">
@@ -42,9 +42,9 @@
             </div>
         </div>
     </div>
-    <div id="wrapper">
+    <div id="wrapper-left">
         <!-- Sidebar -->
-        <div id="sidebar-wrapper">
+        <div id="sidebar-wrapper-left">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
                     My Swaggy Neighborhood
@@ -88,9 +88,22 @@
                 <p data-bind="text:selectedLocationSnippetText"></p><a target="_blank" data-bind="attr:{href:selectedLocationYelpUrl()}">See More</a>
             </div>
         </div>
-        <div id="events">
+    </div>
+    <div id="wrapper-right">
+        <div id="sidebar-wrapper-right">
+            <div id="events" class=" container overlap">
+                <ul id="event-item">
+                    <h2> Events</h2>
+                    <!-- ko foreach: eventsList -->
+                    <li id="event-title" data-bind="text:$data.title"></li>
+                    <li id="event-time" data-bind="text:$data.start_time"></li>
+                    <a id="event-url" target="_blank" data-bind="attr:{href:$data.url}">View Details</a>
+                    <!-- /ko -->
+                </ul>
+            </div>
         </div>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&libraries=places"></script>
+    </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&libraries=places"></script>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">

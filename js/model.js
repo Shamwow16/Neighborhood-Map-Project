@@ -87,7 +87,10 @@ var ViewModel = function() {
         self.categoryArray = ko.observableArray([]);
         self.dataLoaded = ko.observable(false);
         self.selectedCategories = ko.observableArray([]);
-        self.wantsCategory = ko.observable(true);
+        self.eventTitle = ko.observable('');
+        self.eventUrl = ko.observable('');
+        self.eventImageUrl = ko.observable('');
+        self.eventsList = ko.observableArray([]);
         self.setInfoWindowPosition = function(marker) {
             self.infoWindow.open(map, marker)
         };
@@ -102,6 +105,7 @@ var ViewModel = function() {
             self.getInfoWindowContent(self.infoWindow, element.marker);
             self.infoWindow.open(map, element.marker);
         }
+
 
         self.getEventfulData = function() {
             var eventfulUrl = "http://api.eventful.com/json/events/search";
@@ -120,13 +124,21 @@ var ViewModel = function() {
                 dataType: 'jsonp',
                 success: function(results) {
                     console.log(results)
+                    var eventArray = results.events.event;
+                    self.eventsList(eventArray);
+                    console.log(self.eventsList());
+
                 }
             }
             $.ajax(settings);
 
         }
 
+
+
+
         self.getEventfulData();
+
 
 
         self.getYelpData = function(place) {
@@ -161,7 +173,7 @@ var ViewModel = function() {
                     place.createMarker(results.businesses[0].location.coordinate.latitude, results.businesses[0].location.coordinate.longitude, results.businesses[0].id);
                     self.initializeInfoWindow(self.infoWindow, place);
 
-                    console.log(self.categoryArray().length);
+
                     if (self.categories().indexOf(place.category) == -1) {
 
                         self.categories.push(place.category);

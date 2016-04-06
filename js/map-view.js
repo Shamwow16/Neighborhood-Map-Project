@@ -20,10 +20,11 @@ function initMap() {
         zoom: 14
     });
 
-    var titleDiv = $('#title');
-    map.controls[google.maps.ControlPosition.TOP_CENTER].push(titleDiv[0]);
-    var input = document.getElementById('neighborhood-search');
-    searchBox = new google.maps.places.SearchBox(input);
+    /*var titleDiv = $('#title');
+map.controls[google.maps.ControlPosition.TOP_CENTER].push(titleDiv[0]);
+var input = document.getElementById('neighborhood-search');
+searchBox = new google.maps.places.SearchBox(input);
+*/
 
 
     /*initializeMarkers(locations);*/

@@ -102,6 +102,33 @@ var ViewModel = function() {
             self.getInfoWindowContent(self.infoWindow, element.marker);
             self.infoWindow.open(map, element.marker);
         }
+
+        self.getEventfulData = function() {
+            var eventfulUrl = "http://api.eventful.com/json/events/search";
+            var parameters = {
+                location: "Chicago",
+                date: "This Week",
+                within: 10,
+                units: "mi",
+                app_key: "qFc3kDQ6G9kXThcX",
+                callback: 'cb'
+            }
+
+            var settings = {
+                url: eventfulUrl,
+                data: parameters,
+                dataType: 'jsonp',
+                success: function(results) {
+                    console.log(results)
+                }
+            }
+            $.ajax(settings);
+
+        }
+
+        self.getEventfulData();
+
+
         self.getYelpData = function(place) {
             var yelpUrl = "https://api.yelp.com/v2/search";
             var parameters = {

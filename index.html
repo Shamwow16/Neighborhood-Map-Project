@@ -23,7 +23,22 @@
                 <h2>Search your hood!</h2>
             </div>
             <div class="col-sm-3">
-                <span><input data-bind="value: neighborhoodInput, valueUpdate: 'keypress'" id='neighborhood-search' type='text' placeholder='Neigborhood'></span>
+                <div class="btn-group">
+                    <button id="filter-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
+                    <ul class="submenu dropdown-menu dropdown-menu-right">
+                        <li>Filter By</li>
+                        <li class="dropdown-item submenu">Categories
+                            <ul class="submenu-items">
+                                <!-- ko foreach: filteredCategories -->
+                                <div class="row">
+                                    <input class="col-sm-2" type="checkbox" data-bind="checked: $root.selectedCategories,checkedValue:$data">
+                                    <p class=" col-sm-6 dropdown-item no-indent" data-bind="text:$data"></p>
+                                </div>
+                                <!-- /ko -->
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -36,22 +51,6 @@
                 </li>
                 <li>
                     <input id="filter-input" placeholder="Search your neighborhood" data-bind="value: filter, valueUpdate:'keyup'" type="text"></input>
-                    <div class="btn-group">
-                        <button id="filter-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
-                        <ul class="submenu dropdown-menu dropdown-menu-right">
-                            <li>Filter By</li>
-                            <li class="dropdown-item submenu">Categories
-                                <ul class="submenu-items">
-                                    <!-- ko foreach: filteredCategories -->
-                                    <div class="row">
-                                        <input class="col-sm-2" type="checkbox" data-bind="checked: $root.selectedCategories,checkedValue:$data">
-                                        <p class=" col-sm-6 dropdown-item no-indent" data-bind="text:$data"></p>
-                                    </div>
-                                    <!-- /ko -->
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
             </ul>
             <br>
@@ -88,6 +87,8 @@
             <div class="col-sm-12">
                 <p data-bind="text:selectedLocationSnippetText"></p><a target="_blank" data-bind="attr:{href:selectedLocationYelpUrl()}">See More</a>
             </div>
+        </div>
+        <div id="events">
         </div>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&libraries=places"></script>
 </body>

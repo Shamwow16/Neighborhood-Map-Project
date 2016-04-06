@@ -69,6 +69,9 @@
                     <a data-bind="text:name, click:$parent.showInfoWindowOnClick"></a>
                 </li>
             </script>
+            <div id="error-message">
+                <h4 data-bind="text:yelpError"></h4>
+            </div>
         </div>
         <div id="map"></div>
         <div style="display: none" id="infowindow-content">

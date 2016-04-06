@@ -10,7 +10,7 @@ var geoLocations = [{
     },
     { name: "Mariano's" },
     { name: "T-Mobile" },
-    { name: "Taste of Lebanon" },
+    { name: "Tittys of Lebasaffnon" },
     { name: "Foster Avenue Beach" },
     { name: "Pastoral" },
     { name: "Riviera" },
@@ -87,6 +87,7 @@ var ViewModel = function() {
         self.categoryArray = ko.observableArray([]);
         self.dataLoaded = ko.observable(false);
         self.selectedCategories = ko.observableArray([]);
+        self.yelpError = ko.observable('');
         self.eventTitle = ko.observable('');
         self.eventUrl = ko.observable('');
         self.eventImageUrl = ko.observable('');
@@ -166,26 +167,35 @@ var ViewModel = function() {
                 cache: true,
                 dataType: 'jsonp',
                 success: function(results) {
-
-                    place.category = results.businesses[0].categories[0][0];
-                    self.categoryArray().push(place.category);
-                    self.yelpDataArray.push(results);
-                    place.createMarker(results.businesses[0].location.coordinate.latitude, results.businesses[0].location.coordinate.longitude, results.businesses[0].id);
-                    self.initializeInfoWindow(self.infoWindow, place);
-
-
-                    if (self.categories().indexOf(place.category) == -1) {
-
-                        self.categories.push(place.category);
+                    //If the Yelp response for a particular place is empty, runs error function
+                    if (results.businesses.length == 0) {
+                        console.log("Boo");
+                        this.error();
                     }
+                    if (results.businesses.length != 0) {
+                        place.createMarker(results.businesses[0].location.coordinate.latitude, results.businesses[0].location.coordinate.longitude, results.businesses[0].id);
+                        place.category = results.businesses[0].categories[0][0];
+                        self.categoryArray().push(place.category);
+                        self.yelpDataArray.push(results);
 
-                    counter++;
+                        self.initializeInfoWindow(self.infoWindow, place);
 
+
+                        if (self.categories().indexOf(place.category) == -1) {
+
+                            self.categories.push(place.category);
+                        }
+
+                        counter++;
+                    }
                 },
                 error: function(error) {
                     // Do stuff on fail
                     console.log(error);
-                    console.log("Not found!");
+
+                    var deleteIndex = self.places().indexOf(place);
+                    self.places().splice(deleteIndex, 1);
+                    self.yelpError("Yelp has got nothin' on " + place.name());
                 }
             };
 

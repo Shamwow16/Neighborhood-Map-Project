@@ -8,15 +8,6 @@
 </head>
 
 <body>
-    <!-- <div class="row">
-<div class="col-sm-12">
-<label>Enter Street Address:</label>
-<input class="input-field" id="address-input" type="text" placeholder="Street Address">
-<label>Enter City:</label>
-<input class="input-field" id="city-input" type="text" placeholder="City">
-<button class="btn-primary">Show My Swaggy Neighborhood</button>
-</div>
-</div> -->
     <div id="title">
         <div class="row">
             <div class="col-sm-6 text-center">
@@ -62,6 +53,10 @@
             <br>
             <br>
             <br>
+            <div id="error-message" data-bind="visible: shouldShowMessage">
+                <p class="row" id="close-paragraph"><span data-bind="click:hideErrorMessage" id="close-icon text-right" class="glyphicon glyphicon-remove"></span></p>
+                <h4 data-bind="text:yelpError"></h4>
+            </div>
             <ul data-bind="template: {name:'locations', foreach:filterLocationList}">
             </ul>
             <script type="text/html" id="locations">
@@ -69,9 +64,6 @@
                     <a data-bind="text:name, click:$parent.showInfoWindowOnClick"></a>
                 </li>
             </script>
-            <div id="error-message">
-                <h4 data-bind="text:yelpError"></h4>
-            </div>
         </div>
         <div id="map"></div>
         <div style="display: none" id="infowindow-content">
@@ -109,6 +101,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&libraries=places"></script>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script src="js/lib/knockout-3.2.0.js"></script>

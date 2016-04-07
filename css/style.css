@@ -45,6 +45,24 @@ li {
     margin-top: 2em;
 }
 
+#close-icon {
+    z-index: 1001 !important;
+    height: 20px !important;
+    width: 20px !important;
+    color: yellow !important;
+}
+
+#close-paragraph {
+    text-align: right !important;
+}
+
+#error-message {
+    background-color: #323232;
+    color: #fff;
+    padding: 1em 2em;
+    margin
+}
+
 #wrapper.toggled {
     padding-left: 250px;
 }
@@ -213,11 +231,15 @@ li {
 }
 
 .submenu {
-    width: 150px !important;
+    width: 250px !important;
 }
 
 .submenu-items {
-    width: 300px !important;
+    width: 250px !important;
+}
+
+.dropdown-item {
+    top: auto;
 }
 
 

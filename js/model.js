@@ -1,16 +1,18 @@
+//Initialize Google Maps
 if (map == null) {
     initMap();
+
 }
 
-var initialPlaces = [];
+var geoLocations = [];
 
 
-var geoLocations = [{
+/*var geoLocations = [{
         name: 'Big Jones'
     },
     { name: "Mariano's" },
     { name: "T-Mobile" },
-    { name: "Tittys of Lebasaffnon" },
+    { name: "Taste of Lebanon" },
     { name: "Foster Avenue Beach" },
     { name: "Pastoral" },
     { name: "Riviera" },
@@ -21,7 +23,8 @@ var geoLocations = [{
     { name: "CVS" },
     { name: "Babylon" }
 ]
-
+*/
+//Generates an ID for the yelp AJAX request
 function makeid() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -33,20 +36,12 @@ function makeid() {
 }
 
 
-var counter = 0;
+
 var yelpLocations = [];
 
 var yelpData = [];
 var dataLoaded = ko.observable(false);
 
-function dataHasLoaded() {
-    if (initialPlaces.length != 0) {
-        dataLoaded(true);
-        return true;
-    }
-
-    return false;
-}
 
 
 var geoLocation = function(data) {
@@ -90,24 +85,38 @@ var ViewModel = function() {
         self.yelpError = ko.observable('');
         self.eventTitle = ko.observable('');
         self.eventUrl = ko.observable('');
+
+        self.myFirebaseRef = ko.observable('');
         self.eventImageUrl = ko.observable('');
         self.eventsList = ko.observableArray([]);
+        self.shouldShowMessage = ko.observable(false);
         self.setInfoWindowPosition = function(marker) {
             self.infoWindow.open(map, marker)
         };
         self.filter = ko.observable('');
 
-        geoLocations.forEach(function(place) {
-            self.places().push(new geoLocation(place));
-        });
+        //Creates a reference to the firebase database which contains a JSON object of the locations I like in my neighborhood
+        self.myFirebaseRef = new Firebase("https://glaring-heat-1861.firebaseio.com/");
+        //The listener below reads data from Firebase and stores it in the geoLocations array from which it is passed into the self.places
+        //array as an array of geoLocation objects. The self.places() array is the primary array used to filtering and displaying markers.
+        self.myFirebaseRef.on("value", function(snapshot) {
+            console.log(snapshot.val());
+            geoLocations = snapshot.val();
+            geoLocations.forEach(function(place) {
+                self.places.push(new geoLocation(place));
+                console.log(self.places);
+            })
+        })
 
+        //Shows the infoWindow on click by getting the infowindow content for a specific marker and then opening it.
         self.showInfoWindowOnClick = function(element) {
             console.log(element.marker);
             self.getInfoWindowContent(self.infoWindow, element.marker);
             self.infoWindow.open(map, element.marker);
         }
 
-
+        //Function that handles the AJAX request for Eventful API to show list of nearby events. Shows the first 10 events
+        //happening this week.
         self.getEventfulData = function() {
             var eventfulUrl = "http://api.eventful.com/json/events/search";
             var parameters = {
@@ -124,10 +133,10 @@ var ViewModel = function() {
                 data: parameters,
                 dataType: 'jsonp',
                 success: function(results) {
-                    console.log(results)
+
                     var eventArray = results.events.event;
                     self.eventsList(eventArray);
-                    console.log(self.eventsList());
+
 
                 }
             }
@@ -137,11 +146,12 @@ var ViewModel = function() {
 
 
 
-
+        //Call for the Eventful AJAX request is made here.
         self.getEventfulData();
 
 
-
+        //Below is the Yelp API request function definition. Uses each location's name to get information about it that is then displayed
+        //in the infoWindows.
         self.getYelpData = function(place) {
             var yelpUrl = "https://api.yelp.com/v2/search";
             var parameters = {
@@ -172,6 +182,8 @@ var ViewModel = function() {
                         console.log("Boo");
                         this.error();
                     }
+                    // If the Yelp responses are all successfully received, a marker is created for each place and category array is updated
+                    // Finally, the infoWindow is initialized.
                     if (results.businesses.length != 0) {
                         place.createMarker(results.businesses[0].location.coordinate.latitude, results.businesses[0].location.coordinate.longitude, results.businesses[0].id);
                         place.category = results.businesses[0].categories[0][0];
@@ -180,22 +192,25 @@ var ViewModel = function() {
 
                         self.initializeInfoWindow(self.infoWindow, place);
 
+                        // The if statement below prevents a category from being duplicated in case there are multiple locations with
+                        // the same category.
 
                         if (self.categories().indexOf(place.category) == -1) {
 
                             self.categories.push(place.category);
                         }
 
-                        counter++;
+
                     }
                 },
                 error: function(error) {
-                    // Do stuff on fail
-                    console.log(error);
 
+                    console.log(error);
+                    //Finds index of place for which no yelp info was obtained and updates yelpError message.
                     var deleteIndex = self.places().indexOf(place);
                     self.places().splice(deleteIndex, 1);
-                    self.yelpError("Yelp has got nothin' on " + place.name());
+                    self.yelpError("Sorry, Yelp has got nothin' on " + place.name());
+                    self.shouldShowMessage(true);
                 }
             };
 
@@ -205,7 +220,7 @@ var ViewModel = function() {
 
 
 
-
+        // This function sets the content for the infoWindow and each type of info is bound via Knockout to the DOM.
         self.setInfoWindowContent = function(yelpDataItem) {
             self.selectedLocation(yelpDataItem.businesses[0]);
             self.selectedLocationName(self.selectedLocation().name);
@@ -227,6 +242,21 @@ var ViewModel = function() {
                 }
             };
         };
+
+        //This function checks to make sure that all markers are set before creating the "List" on the website. Prevents null markers
+        //from being processed.
+        self.allMarkersSet = function() {
+            if (self.places().length == geoLocations.length) {
+                self.places().forEach(function(place) {
+                    if (place.marker == null) {
+                        return false;
+                    }
+                })
+                return true;
+            }
+
+            return false;
+        }
 
         self.initializeInfoWindow = function(infowindow, place) {
 
@@ -250,13 +280,17 @@ var ViewModel = function() {
 
         }
 
+        //setMapContent makes the yelp Request for each location of interest once self.places is fully populated.
         self.setMapContent = function() {
-            self.places().forEach(function(place) {
-                self.getYelpData(place);
-            })
+            if (self.places().length == geoLocations.length && self.places().length > 0) {
+                self.places().forEach(function(place) {
+                    self.getYelpData(place);
+                })
+            }
         }
 
 
+        //This function shows infoWindow when a particular location is clicked and also toggles the bounce animation for a particular marker
         self.showInfoWindowOnClick = function(element) {
             self.getInfoWindowContent(self.infoWindow, element.marker);
             toggleBounce(element.marker);
@@ -264,28 +298,14 @@ var ViewModel = function() {
 
         }
 
-        /* self.isSelected = function(geoLocation) {
-     if (geoLocation.selected() == true) {
-         console.log("Selected");
-         return true;
-     }
-
-     return false;
- }
-*/
-
-        /*self.filteredCategories = ko.computed(function() {
-
-    return ko.utils.arrayFilter(self.places(), function(place) {
-        if (place.isSelected() == true) {
-            return true;
-        } else {
-            return false;
+        //This function hides the error message that displays in case the ajax request is not successful for a reason.
+        self.hideErrorMessage = function() {
+            self.shouldShowMessage(false);
         }
-    });
 
-});
-*/
+
+
+
         self.selectedCategories.subscribe(function(selectedCategories) {
 
             selectedCategories.forEach(function(selectedCategory) {
@@ -323,17 +343,20 @@ var ViewModel = function() {
         }, this);
 
 
+
         self.filterLocationList = ko.computed(function() {
             var search = self.filter().toLowerCase();
 
             /*self.places([]);
              */
-            dataLoaded(false);
+
             if (self.yelpDataArray().length == 0) {
                 self.setMapContent();
             }
 
-            if (self.categoryArray().length == self.places().length) {
+
+
+            if (self.categoryArray().length == self.places().length && self.allMarkersSet() == true) {
 
                 return ko.utils.arrayFilter(self.places(), function(geoLocation) {
                     var isCategorySelected = false;
@@ -424,4 +447,6 @@ var ViewModel = function() {
 $('.submenu').on('click', function(event) {
     event.stopPropagation();
 });
+
+
 ko.applyBindings(new ViewModel);

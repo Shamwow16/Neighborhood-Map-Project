@@ -18,6 +18,8 @@ function initMap() {
 
         center: ({ lat: neighborhood.latitude, lng: neighborhood.longitude }),
         zoom: 14
+
+
     });
 
     /*var titleDiv = $('#title');
@@ -25,10 +27,15 @@ map.controls[google.maps.ControlPosition.TOP_CENTER].push(titleDiv[0]);
 var input = document.getElementById('neighborhood-search');
 searchBox = new google.maps.places.SearchBox(input);
 */
+    var center = map.getCenter();
 
-
-    /*initializeMarkers(locations);*/
+    google.maps.event.addDomListener(window, 'resize', function() {
+        map.setCenter(center);
+        /*initializeMarkers(locations);*/
+    })
 }
+
+
 
 /*function initializeMarkers(locations){
         for(var i=0; i<locations.length ; i++){

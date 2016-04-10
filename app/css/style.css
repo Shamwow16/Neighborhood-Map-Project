@@ -34,14 +34,6 @@ li {
     transition: all 0.5s ease;
 }
 
-
-/* #events {
-    position: relative !important;
-    z-index: 3 !important;
-    left: 1600px !important;
-   top: 150px !important;
-} */
-
 #event-item {
     background: rgba(0, 0, 0, 0.8);
     color: #fff;
@@ -78,7 +70,6 @@ li {
     background-color: #323232;
     color: #fff;
     padding: 1em 2em;
-    margin
 }
 
 #wrapper.toggled {
@@ -88,28 +79,12 @@ li {
 #sidebar-wrapper-left {
     z-index: 1000;
     position: fixed;
-    /* left: 250px; */
     width: auto !important;
     padding: 1em 1em;
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
     background: rgba(0, 0, 0, 0.8);
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-}
-
-#sidebar-wrapper-right {
-    z-index: 1000;
-    position: fixed;
-    right: 100px;
-    top: 0px;
-    width: 250px !important;
-    height: 100%;
-    margin-right: -150px;
-    background: #000;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -248,15 +223,9 @@ li {
 
 /* FILTER DROPDOWN MENU STYLING */
 
-
-/* .dropdown-menu-right {
-    right: 90 !important;
-} */
-
 .no-indent {
     text-indent: 0 !important;
     top: -8px;
-    /* width: 150px !important; */
 }
 
 .submenu {

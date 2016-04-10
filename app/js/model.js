@@ -20,10 +20,8 @@ function makeid() {
 
 
 
-var yelpLocations = [];
 
-var yelpData = [];
-var dataLoaded = ko.observable(false);
+
 
 
 
@@ -45,7 +43,7 @@ var geoLocation = function(data) {
     }
 };
 
-var updatedList = [];
+
 var ViewModel = function() {
 
         var self = this;
@@ -63,7 +61,6 @@ var ViewModel = function() {
         self.yelpDataArray = ko.observableArray([]);
         self.categories = ko.observableArray([]);
         self.categoryArray = ko.observableArray([]);
-        self.dataLoaded = ko.observable(false);
         self.selectedCategories = ko.observableArray([]);
         self.yelpError = ko.observable('');
         self.eventfulError = ko.observable('');
@@ -89,7 +86,6 @@ var ViewModel = function() {
                 geoLocations = snapshot.val();
                 geoLocations.forEach(function(place) {
                     self.places.push(new geoLocation(place));
-                    console.log(self.places);
                 })
             }, //The following function will alert user that the data could not be loaded from Firebase.
             function(errorObject) {
@@ -98,7 +94,6 @@ var ViewModel = function() {
 
         //Shows the infoWindow on click by getting the infowindow content for a specific marker and then opening it.
         self.showInfoWindowOnClick = function(element) {
-            console.log(element.marker);
             self.getInfoWindowContent(self.infoWindow, element.marker);
             self.infoWindow.open(map, element.marker);
         }
@@ -106,7 +101,7 @@ var ViewModel = function() {
         //Function that handles the AJAX request for Eventful API to show list of nearby events. Shows the first 10 events
         //happening this week.
         self.getEventfulData = function() {
-            var eventfulUrl = "http://api.eventful.com/json/events/seach";
+            var eventfulUrl = "http://api.eventful.com/json/events/search";
             var parameters = {
                 location: "Chicago",
                 date: "This Week",
@@ -201,7 +196,7 @@ var ViewModel = function() {
                 },
                 error: function(error) {
 
-                    console.log(error);
+
                     //Finds index of place for which no yelp info was obtained and updates yelpError message.
                     var deleteIndex = self.places().indexOf(place);
                     self.places().splice(deleteIndex, 1);
@@ -313,7 +308,6 @@ var ViewModel = function() {
 
                     if (selectedCategory != place.category && self.selectedCategories().indexOf(place.category) == -1) {
                         removeMarker(place.marker);
-                        /* removeMarker(geoLocation.marker);*/
                         return false;
 
                     } else {
@@ -346,8 +340,6 @@ var ViewModel = function() {
         self.filterLocationList = ko.computed(function() {
             var search = self.filter().toLowerCase();
 
-            /*self.places([]);
-             */
 
             if (self.yelpDataArray().length == 0) {
                 self.setMapContent();
@@ -381,11 +373,7 @@ var ViewModel = function() {
 
 
                     if (geoLocation.category != null && geoLocation.marker != null) {
-                        /*return ko.utils.arrayFilter(self.categories(), function(category) {*/
 
-
-                        /*if (geoLocation.category == category) {
-                         */
                         if (geoLocation.name().toLowerCase().indexOf(search) == 0 && search != "" && isCategorySelected) {
                             geoLocation.marker.setMap(map);
                             return true;
@@ -404,15 +392,6 @@ var ViewModel = function() {
                             return true;
                         }
 
-
-
-
-
-
-                        /*}*/
-
-                        /* })
-                         */
                         removeMarker(geoLocation.marker);
 
 

@@ -1,0 +1,25 @@
+{
+  "name": "neighborhoodmap",
+  "version": "1.0.0",
+  "description": "**Shamyle's Awesome Neighborhood Map Project** is part of the Udacity Front-End Web Development Nanodegree and is geared at helping students grasp the essentials of the Model-View-ViewModel architectural pattern. The Neighborhood Map application allows the user to view the main highlights in the happening neighborhood of Ravenswood in Chicago. Highlights include restaurants, nightlife, amenities, etc. Users can also view events happening in the area for the week.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shamwow16/Neighborhood-Map-Project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shamwow16/Neighborhood-Map-Project/issues"
+  },
+  "homepage": "https://github.com/Shamwow16/Neighborhood-Map-Project#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^2.0.5",
+    "gulp-copy": "0.0.2",
+    "gulp-uglify": "^1.5.3"
+  }
+}

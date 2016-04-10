@@ -9,30 +9,25 @@
 
 <body>
     <div id="title">
-
-<div class="row">
-
-      <button type="button" id="toggle-button" class="pull-left navbar-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="#sidebar-wrapper-left">
-            <span class="icon-size glyphicon glyphicon-search"></span>
-        </button>
-
-
-         <div class="col-sm-5 text-left">
-                <h2>Search your hood!</h2>
+        <div class="row">
+            <button type="button" id="toggle-button" class="pull-left navbar-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="#sidebar-wrapper-left">
+                <span class="icon-size glyphicon glyphicon-search"></span>
+            </button>
+            <div class="col-sm-4 text-left">
+                <h2>Ravenswood, Chicago</h2>
             </div>
-
-
-            <div class="col-sm-offset-1 col-sm-3">
+            <div class="col-sm-2">
                 <div class="btn-group">
                     <button id="filter-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
-                    <ul class="submenu dropdown-menu dropdown-menu-right">
-                        <li>Filter By</li>
-                        <li class="dropdown-item submenu">Categories
+                    <ul class="submenu dropdown-menu">
+                        <li class="text-center">Filter By</li>
+                        <li id="filter-title" class="dropdown-item submenu">
+                            <h4 class="text-center">Categories</h4>
                             <ul class="submenu-items">
                                 <!-- ko foreach: filteredCategories -->
                                 <div class="row">
-                                    <input class="col-sm-2" type="checkbox" data-bind="checked: $root.selectedCategories,checkedValue:$data">
-                                    <p class=" col-sm-6 dropdown-item no-indent" data-bind="text:$data"></p>
+                                    <input class="col-sm-1" type="checkbox" data-bind="checked: $root.selectedCategories,checkedValue:$data">
+                                    <p class=" col-sm-8 dropdown-item no-indent" data-bind="text:$data"></p>
                                 </div>
                                 <!-- /ko -->
                             </ul>
@@ -40,37 +35,24 @@
                     </ul>
                 </div>
             </div>
-
-            <div id="events" class=" col-sm-offset-3 col-sm-3 overlap">
-
-    <div class="dropdown">
-  <h2 class="dropdown-toggle" type="button" data-toggle="dropdown">Events Nearby
+            <div id="events" class="col-sm-3 overlap">
+                <div class="dropdown">
+                    <h2 class="dropdown-toggle" type="button" data-toggle="dropdown">Events Nearby
   <span class="caret"></span></h2>
-  <ul class="dropdown-menu" id="event-item">
-    <!-- ko foreach: eventsList -->
-                    <li id="event-title" data-bind="text:$data.title"></li>
-                    <li id="event-time" data-bind="text:$data.start_time"></li>
-                    <a id="event-url" target="_blank" data-bind="attr:{href:$data.url}">View Details</a>
-                    <!-- /ko -->
-  </ul>
-</div>
-
-
-
-
-
+                    <ul class="dropdown-menu" id="event-item">
+                        <!-- ko foreach: eventsList -->
+                        <li id="event-title" data-bind="text:$data.title"></li>
+                        <li id="event-time" data-bind="text:$data.start_time"></li>
+                        <a id="event-url" target="_blank" data-bind="attr:{href:$data.url}">View Details</a>
+                        <!-- /ko -->
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-
     <div id="wrapper-left">
-
         <!-- Sidebar -->
         <div id="sidebar-wrapper-left">
-            <!--   <nav id="myNavmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation">
-              ...
-          </nav> -->
-
             <div class="navmenu navmenu-default navmenu-fixed-left offcanvas in">
                 <ul id="sidebar">
                     <li class="sidebar-brand">
@@ -92,7 +74,7 @@
                 </ul>
                 <script type="text/html" id="locations">
                     <li class="location-item-padding location-item-margin">
-                        <a data-bind="text:name, click:$parent.showInfoWindowOnClick"></a>
+                        <a class="location-item" data-bind="text:name, click:$parent.showInfoWindowOnClick"></a>
                     </li>
                 </script>
             </div>
@@ -116,31 +98,6 @@
             </div>
         </div>
     </div>
-
-<!--     <div id="wrapper-right">
-
-        <div id="events" class=" container overlap">
-            <ul class="" id="event-item">
-<div class="dropdown">
-  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Events
-  <span class="caret"></span></button>
-  <ul class="dropdown-menu" id="event-item">
-ko foreach: eventsList
-                <li id="event-title" data-bind="text:$data.title"></li>
-                <li id="event-time" data-bind="text:$data.start_time"></li>
-                <li><a id="event-url" target="_blank" data-bind="attr:{href:$data.url}">View Details</a></li>
-                /ko
-  </ul>
-</div>
-
-
-
-            </ul>
-
-        </div>
-
-
-</div> -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&libraries=places"></script>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>

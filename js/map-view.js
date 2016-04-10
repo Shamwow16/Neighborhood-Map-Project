@@ -17,7 +17,7 @@ function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
 
         center: ({ lat: neighborhood.latitude, lng: neighborhood.longitude }),
-        zoom: 14
+        zoom: 15
 
 
     });
@@ -37,42 +37,14 @@ searchBox = new google.maps.places.SearchBox(input);
 
 
 
-/*function initializeMarkers(locations){
-        for(var i=0; i<locations.length ; i++){
-        var marker = new google.maps.Marker({
-      position: {lat:locations[i].latitude, lng:locations[i].longitude},
-      map: map,
-      title: locations[i].name
-    })
-        markerArray.push(marker);
-    };
-      initializeInfoWindows(markerArray)
-
-      }*/
-
-/*var selectedMarker;
-      function initializeInfoWindow(infowindow, place){
-
-      /*  infowindow = new google.maps.InfoWindow(
-        {
-          content: contentString,
-        });*/
 
 
-/*  place.marker.addListener('click', function(infowindowCopy, marker){
-
-          return function(){
-          getInfoWindowContent(infowindowCopy,marker);
-          toggleBounce();
-          infowindowCopy.setPosition(marker.position);
-          infowindowCopy.open(map,marker);
+function toggleBounce(marker, markerArray) {
+    markerArray.forEach(function(markerItem) {
+        if (markerItem.marker_id != marker.marker_id) {
+            markerItem.setAnimation(null);
         }
-        }(infowindow,place.marker));
-
-
-  }*/
-
-function toggleBounce(marker) {
+    });
     if (marker.getAnimation() !== null) {
         marker.setAnimation(null);
     } else {

@@ -85,7 +85,7 @@ var ViewModel = function() {
         self.yelpError = ko.observable('');
         self.eventTitle = ko.observable('');
         self.eventUrl = ko.observable('');
-
+        self.markerArray = ko.observableArray([]);
         self.myFirebaseRef = ko.observable('');
         self.eventImageUrl = ko.observable('');
         self.eventsList = ko.observableArray([]);
@@ -191,6 +191,7 @@ var ViewModel = function() {
                         self.yelpDataArray.push(results);
 
                         self.initializeInfoWindow(self.infoWindow, place);
+                        self.markerArray().push(place.marker);
 
                         // The if statement below prevents a category from being duplicated in case there are multiple locations with
                         // the same category.
@@ -264,7 +265,7 @@ var ViewModel = function() {
 
                 return function() {
                     self.getInfoWindowContent(infowindowCopy, marker);
-                    toggleBounce(marker);
+                    toggleBounce(marker, self.markerArray());
                     infowindowCopy.setPosition(marker.position);
                     infowindowCopy.open(map, marker);
 
@@ -293,7 +294,7 @@ var ViewModel = function() {
         //This function shows infoWindow when a particular location is clicked and also toggles the bounce animation for a particular marker
         self.showInfoWindowOnClick = function(element) {
             self.getInfoWindowContent(self.infoWindow, element.marker);
-            toggleBounce(element.marker);
+            toggleBounce(element.marker, self.markerArray());
             self.infoWindow.open(map, element.marker);
 
         }

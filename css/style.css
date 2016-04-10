@@ -43,17 +43,22 @@ li {
 } */
 
 #event-item {
-    background-color: #000 !important;
+    background: rgba(0, 0, 0, 0.8);
     color: #fff;
     font-size: 0.8em;
     font-weight: bold;
+    padding: 2em 2em;
+}
+
+#events {
+    text-align: right;
 }
 
 #event-title {
     margin-top: 2em;
 }
 
-.icon-size{
+.icon-size {
     font-size: 2em;
     margin-left: 1em;
 }
@@ -89,7 +94,7 @@ li {
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
-    background: #000;
+    background: rgba(0, 0, 0, 0.8);
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -207,23 +212,33 @@ li {
     margin-top: 1em;
 }
 
+.location-item {
+    color: #fff;
+    font-size: 1em;
+}
+
 
 /* FILTER INPUT STYLING */
 
 #filter-input {
     height: 40px !important;
-    color: #000;
+    /* color: #000; */
 }
 
 
 /* FILTER BUTTON STYLING */
 
 .dropdown-menu {
-    background-color: #000 !important;
+    background: rgba(0, 0, 0, 0.8) !important;
 }
 
 #filter-button {
     margin-left: 20px;
+    margin-top: 20px;
+}
+
+#filter-title {
+    padding-bottom: 2em;
 }
 
 #infowindow-template {
@@ -260,7 +275,7 @@ li {
 /* NEIGHBORHOOD SEARCH TITLE */
 
 #title {
-    background-color: #000;
+    background: rgba(0, 0, 0, 0.8);
     color: #fff;
 }
 

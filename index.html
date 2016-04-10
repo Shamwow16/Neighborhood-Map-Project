@@ -40,6 +40,10 @@
                     <h2 class="dropdown-toggle" type="button" data-toggle="dropdown">Events Nearby
   <span class="caret"></span></h2>
                     <ul class="dropdown-menu" id="event-item">
+                        <div class="error-message" data-bind="visible: shouldShowEventfulError
+">
+                            <p data-bind="text:eventfulError"></p>
+                        </div>
                         <!-- ko foreach: eventsList -->
                         <li id="event-title" data-bind="text:$data.title"></li>
                         <li id="event-time" data-bind="text:$data.start_time"></li>
@@ -66,7 +70,7 @@
                 <br>
                 <br>
                 <br>
-                <div id="error-message" data-bind="visible: shouldShowMessage">
+                <div class="error-message" data-bind="visible: shouldShowMessage">
                     <p class="row" id="close-paragraph"><span data-bind="click:hideErrorMessage" id="close-icon text-right" class="glyphicon glyphicon-remove"></span></p>
                     <h4 data-bind="text:yelpError"></h4>
                 </div>

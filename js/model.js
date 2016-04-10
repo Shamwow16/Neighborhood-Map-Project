@@ -7,23 +7,6 @@ if (map == null) {
 var geoLocations = [];
 
 
-/*var geoLocations = [{
-        name: 'Big Jones'
-    },
-    { name: "Mariano's" },
-    { name: "T-Mobile" },
-    { name: "Taste of Lebanon" },
-    { name: "Foster Avenue Beach" },
-    { name: "Pastoral" },
-    { name: "Riviera" },
-    { name: "Aroy Thai" },
-    { name: "LA Fitness" },
-    { name: "Primo Chuki's" },
-    { name: "Green Mill" },
-    { name: "CVS" },
-    { name: "Babylon" }
-]
-*/
 //Generates an ID for the yelp AJAX request
 function makeid() {
     var text = "";
@@ -83,6 +66,7 @@ var ViewModel = function() {
         self.dataLoaded = ko.observable(false);
         self.selectedCategories = ko.observableArray([]);
         self.yelpError = ko.observable('');
+        self.eventfulError = ko.observable('');
         self.eventTitle = ko.observable('');
         self.eventUrl = ko.observable('');
         self.markerArray = ko.observableArray([]);
@@ -90,6 +74,7 @@ var ViewModel = function() {
         self.eventImageUrl = ko.observable('');
         self.eventsList = ko.observableArray([]);
         self.shouldShowMessage = ko.observable(false);
+        self.shouldShowEventfulError = ko.observable(false);
         self.setInfoWindowPosition = function(marker) {
             self.infoWindow.open(map, marker)
         };
@@ -100,13 +85,16 @@ var ViewModel = function() {
         //The listener below reads data from Firebase and stores it in the geoLocations array from which it is passed into the self.places
         //array as an array of geoLocation objects. The self.places() array is the primary array used to filtering and displaying markers.
         self.myFirebaseRef.on("value", function(snapshot) {
-            console.log(snapshot.val());
-            geoLocations = snapshot.val();
-            geoLocations.forEach(function(place) {
-                self.places.push(new geoLocation(place));
-                console.log(self.places);
+                console.log(snapshot.val());
+                geoLocations = snapshot.val();
+                geoLocations.forEach(function(place) {
+                    self.places.push(new geoLocation(place));
+                    console.log(self.places);
+                })
+            }, //The following function will alert user that the data could not be loaded from Firebase.
+            function(errorObject) {
+                alert(errorObject.code + "My locations of interest could not be loaded. :( Please refresh the page and try again. If issue persists, please email me at: shamyleg@gmail.com")
             })
-        })
 
         //Shows the infoWindow on click by getting the infowindow content for a specific marker and then opening it.
         self.showInfoWindowOnClick = function(element) {
@@ -118,7 +106,7 @@ var ViewModel = function() {
         //Function that handles the AJAX request for Eventful API to show list of nearby events. Shows the first 10 events
         //happening this week.
         self.getEventfulData = function() {
-            var eventfulUrl = "http://api.eventful.com/json/events/search";
+            var eventfulUrl = "http://api.eventful.com/json/events/seach";
             var parameters = {
                 location: "Chicago",
                 date: "This Week",
@@ -138,6 +126,13 @@ var ViewModel = function() {
                     self.eventsList(eventArray);
 
 
+                },
+                error: function(error) {
+
+                    console.log(error);
+                    //Error handling for Eventful. Displays error message in dropdown if data does not load.
+                    self.eventfulError("Sorry, Eventful was unable to load events near " + neighborhood.name + ". Please refresh the page to try again.");
+                    self.shouldShowEventfulError(true);
                 }
             }
             $.ajax(settings);
@@ -304,6 +299,9 @@ var ViewModel = function() {
             self.shouldShowMessage(false);
         }
 
+        self.hideEventfulErrorMessage = function() {
+            self.shouldShowEventfulError(false);
+        }
 
 
 

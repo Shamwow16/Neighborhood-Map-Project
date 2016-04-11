@@ -10,7 +10,7 @@ var contentString = '<div id="content">Hello Shamyleeeeee!</div>';
 var map;
 /*var infowindow;*/
 var markerArray = [];
-var searchBox;
+
 
 function initMap() {
 
@@ -31,9 +31,10 @@ searchBox = new google.maps.places.SearchBox(input);
 
     google.maps.event.addDomListener(window, 'resize', function() {
         map.setCenter(center);
-        /*initializeMarkers(locations);*/
     })
 }
+
+
 
 
 

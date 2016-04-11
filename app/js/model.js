@@ -1,8 +1,9 @@
 //Initialize Google Maps
+
 if (map == null) {
     initMap();
-
 }
+
 
 var geoLocations = [];
 
@@ -17,7 +18,6 @@ function makeid() {
 
     return text;
 }
-
 
 
 

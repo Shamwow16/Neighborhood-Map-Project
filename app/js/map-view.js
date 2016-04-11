@@ -8,7 +8,7 @@ var contentString = '<div id="content">Hello Shamyleeeeee!</div>';
 }*/
 
 var map;
-/*var infowindow;*/
+var infowindow;
 var markerArray = [];
 
 
@@ -21,6 +21,8 @@ function initMap() {
 
 
     });
+    /* ViewModel.infoWindow = new google.maps.InfoWindow();
+     */
 
     /*var titleDiv = $('#title');
 map.controls[google.maps.ControlPosition.TOP_CENTER].push(titleDiv[0]);
@@ -56,3 +58,5 @@ function toggleBounce(marker, markerArray) {
 function removeMarker(marker) {
     marker.setMap(null);
 }
+
+console.log("o");

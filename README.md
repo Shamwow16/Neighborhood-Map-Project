@@ -18,8 +18,9 @@ Users can also view location details by clicking on a **marker** which also open
 ##Events##
 Users can view events in the area by clicking on the dropdown menu labeled **Events Nearby**. The dropdown shows the most popular events in the area according to the **Eventful** API and more information for each event can be accessed by clicking on 'View Details' which will take the user to the **Eventful** page for that event.
 
-##Filter Button##
-By clicking on the **Filter** Button, users can filter out locations on the map by category. 
+##Running the Application##
+ In order to run the optimized version of the application, go to the **dist** folder in the project directory and click on **index.html** to open it in your default browser. This application has been tested to run for Google Chrome (Version 49.0) and Microsoft Edge (Version 25.1).
+
 
 ##Note##
 This application has been developed keeping usability and responsiveness in mind since it is the developer's aim to provide a smooth user experience. However, on very small devices, it is impossible to view all the events and location information at the same time. 

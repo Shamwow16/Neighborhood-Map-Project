@@ -8,9 +8,9 @@ var contentString = '<div id="content">Hello Shamyleeeeee!</div>';
 }*/
 
 var map;
-/*var infowindow;*/
+var infowindow;
 var markerArray = [];
-var searchBox;
+
 
 function initMap() {
 
@@ -21,6 +21,8 @@ function initMap() {
 
 
     });
+    /* ViewModel.infoWindow = new google.maps.InfoWindow();
+     */
 
     /*var titleDiv = $('#title');
 map.controls[google.maps.ControlPosition.TOP_CENTER].push(titleDiv[0]);
@@ -31,9 +33,10 @@ searchBox = new google.maps.places.SearchBox(input);
 
     google.maps.event.addDomListener(window, 'resize', function() {
         map.setCenter(center);
-        /*initializeMarkers(locations);*/
     })
 }
+
+
 
 
 
@@ -55,3 +58,5 @@ function toggleBounce(marker, markerArray) {
 function removeMarker(marker) {
     marker.setMap(null);
 }
+
+console.log("o");

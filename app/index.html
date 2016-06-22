@@ -5,6 +5,7 @@
     <meta name="viewport" content="initial-scale=1.0">
     <title>Shamyle's Neighborhood Map</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 </head>
 
 <body>
@@ -102,18 +103,18 @@
             </div>
         </div>
     </div>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&libraries=places"></script>
+    <script src="js/places-model.js"></script>
+    <script src="js/map-error.js"></script>
+    <script src="js/map-view.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&libraries=places&callback=initMap" onerror="mapError()"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
 </body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <!-- Jasny Bootstrap provides additional functionality for Bootstrap components and allows the sidebar Search bar to slide on and off the canvas. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script src="js/lib/knockout-3.2.0.js"></script>
+<script async src="js/model.js"></script>
 <script src="https://rawgit.com/bettiolo/oauth-signature-js/master/dist/oauth-signature.min.js"></script>
-<script src="js/map-view.js"></script>
-<script src="js/places-model.js"></script>
-<script src="js/model.js"></script>
 
 </html>

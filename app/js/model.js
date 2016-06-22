@@ -1,9 +1,3 @@
-//Initialize Google Maps
-if (map == null) {
-    initMap();
-
-}
-
 var geoLocations = [];
 
 
@@ -17,7 +11,6 @@ function makeid() {
 
     return text;
 }
-
 
 
 
@@ -49,7 +42,7 @@ var ViewModel = function() {
         var self = this;
         self.neighborhoodInput = ko.observable('');
         self.places = ko.observableArray([]);
-        self.infoWindow = new google.maps.InfoWindow();
+
         self.selectedLocation = ko.observable('');
         self.selectedLocationName = ko.observable('');
         self.selectedLocationCategory = ko.observable('');
@@ -84,9 +77,17 @@ var ViewModel = function() {
         self.myFirebaseRef.on("value", function(snapshot) {
                 console.log(snapshot.val());
                 geoLocations = snapshot.val();
+
                 geoLocations.forEach(function(place) {
-                    self.places.push(new geoLocation(place));
+                    if (place == null) {
+                        var index = geoLocations().indexOf(place);
+                        geoLocations().splice(index, 1);
+                    } else {
+                        self.places.push(new geoLocation(place));
+                    }
                 })
+                self.setMapContent();
+
             }, //The following function will alert user that the data could not be loaded from Firebase.
             function(errorObject) {
                 alert(errorObject.code + "My locations of interest could not be loaded. :( Please refresh the page and try again. If issue persists, please email me at: shamyleg@gmail.com")
@@ -237,7 +238,7 @@ var ViewModel = function() {
         //This function checks to make sure that all markers are set before creating the "List" on the website. Prevents null markers
         //from being processed.
         self.allMarkersSet = function() {
-            if (self.places().length == geoLocations.length) {
+            if (self.places().length == geoLocations.length - 2) {
                 self.places().forEach(function(place) {
                     if (place.marker == null) {
                         return false;
@@ -271,9 +272,14 @@ var ViewModel = function() {
 
         }
 
+        if (self.yelpDataArray().length == 0) {
+            self.infoWindow = new google.maps.InfoWindow();
+
+        }
+
         //setMapContent makes the yelp Request for each location of interest once self.places is fully populated.
         self.setMapContent = function() {
-            if (self.places().length == geoLocations.length && self.places().length > 0) {
+            if (self.places().length == (geoLocations.length - 2) && self.places().length > 0) {
                 self.places().forEach(function(place) {
                     self.getYelpData(place);
                 })
@@ -298,6 +304,11 @@ var ViewModel = function() {
             self.shouldShowEventfulError(false);
         }
 
+        /*   if (self.yelpDataArray().length == 0) {
+       self.setMapContent();
+   }
+*/
+
 
 
         self.selectedCategories.subscribe(function(selectedCategories) {
@@ -313,7 +324,6 @@ var ViewModel = function() {
                     } else {
 
                         if (place.marker.map == null) {
-                            console.log(place.name());
                             place.marker.setMap(map);
                         }
                         return true;
@@ -338,41 +348,43 @@ var ViewModel = function() {
 
 
         self.filterLocationList = ko.computed(function() {
-            var search = self.filter().toLowerCase();
-
-
-            if (self.yelpDataArray().length == 0) {
-                self.setMapContent();
-            }
+            if (self.allMarkersSet() == true) {
+                var search = self.filter().toLowerCase();
 
 
 
-            if (self.categoryArray().length == self.places().length && self.allMarkersSet() == true) {
+
+
+
+
+                if (self.categoryArray().length == self.places().length && self.allMarkersSet() == true) {
+
 
                 return ko.utils.arrayFilter(self.places(), function(geoLocation) {
-                    var isCategorySelected = false;
-                    if (self.selectedCategories().length > 0) {
-                        console.log(self.selectedCategories().length);
-                        for (var i = 0; i < self.selectedCategories().length; i++) {
-                            if (geoLocation.category == self.selectedCategories()[i]) {
-                                isCategorySelected = true;
-                                geoLocation.selected(true);
-                                /*return true;
-                                 */
+                        var isCategorySelected = false;
+                        if (self.selectedCategories().length > 0) {
+                            console.log(self.selectedCategories().length);
+                            for (var i = 0; i < self.selectedCategories().length; i++) {
+                                if (geoLocation.category == self.selectedCategories()[i]) {
+                                    isCategorySelected = true;
+                                    geoLocation.selected(true);
+                                    /*return true;
+                                     */
 
+                                }
                             }
+
+                            if (search === "" && !isCategorySelected) {
+                                return false;
+                            }
+
+
+
                         }
 
-                        if (search === "" && !isCategorySelected) {
-                            return false;
-                        }
 
+                        if (geoLocation.category != null && geoLocation.marker != null) {
 
-
-                    }
-
-
-                    if (geoLocation.category != null && geoLocation.marker != null) {
 
                         if (geoLocation.name().toLowerCase().indexOf(search) == 0 && search != "" && isCategorySelected) {
                             geoLocation.marker.setMap(map);
@@ -395,16 +407,17 @@ var ViewModel = function() {
                         removeMarker(geoLocation.marker);
 
 
-                    }
+                             }
 
-                    return false;
+                        return false;
 
-                })
+                    })
+                     }
+
+
+
+
             }
-
-
-
-
         }, this);
 
         self.filteredCategories = ko.computed(function() {

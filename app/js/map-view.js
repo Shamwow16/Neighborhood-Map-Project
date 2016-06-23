@@ -58,5 +58,3 @@ function toggleBounce(marker, markerArray) {
 function removeMarker(marker) {
     marker.setMap(null);
 }
-
-console.log("o");

@@ -75,7 +75,7 @@ var ViewModel = function() {
         //The listener below reads data from Firebase and stores it in the geoLocations array from which it is passed into the self.places
         //array as an array of geoLocation objects. The self.places() array is the primary array used to filtering and displaying markers.
         self.myFirebaseRef.on("value", function(snapshot) {
-                console.log(snapshot.val());
+
                 geoLocations = snapshot.val();
 
                 geoLocations.forEach(function(place) {
@@ -238,11 +238,12 @@ var ViewModel = function() {
         //This function checks to make sure that all markers are set before creating the "List" on the website. Prevents null markers
         //from being processed.
         self.allMarkersSet = function() {
-            if (self.places().length == geoLocations.length - 2) {
+            if (self.places().length == self.yelpDataArray().length) {
                 self.places().forEach(function(place) {
                     if (place.marker == null) {
                         return false;
                     }
+                    return true;
                 })
                 return true;
             }
@@ -357,10 +358,10 @@ var ViewModel = function() {
 
 
 
-                if (self.categoryArray().length == self.places().length && self.allMarkersSet() == true) {
+                if (self.places().length > 0 && self.allMarkersSet() == true) {
 
 
-                return ko.utils.arrayFilter(self.places(), function(geoLocation) {
+                    return ko.utils.arrayFilter(self.places(), function(geoLocation) {
                         var isCategorySelected = false;
                         if (self.selectedCategories().length > 0) {
                             console.log(self.selectedCategories().length);
@@ -386,33 +387,38 @@ var ViewModel = function() {
                         if (geoLocation.category != null && geoLocation.marker != null) {
 
 
-                        if (geoLocation.name().toLowerCase().indexOf(search) == 0 && search != "" && isCategorySelected) {
-                            geoLocation.marker.setMap(map);
-                            return true;
+                            if (geoLocation.name().toLowerCase().indexOf(search) == 0 && search != "" && isCategorySelected) {
+                                geoLocation.marker.setMap(map);
+                                return true;
+                            }
+
+                            if (search === "" && isCategorySelected) {
+                                geoLocation.marker.setMap(map);
+
+                                return true;
+                            }
+
+
+                            if (geoLocation.name().toLowerCase().indexOf(search) == 0 && self.selectedCategories().length == 0) {
+                                geoLocation.marker.setMap(map);
+
+                                return true;
+                            }
+
+                            removeMarker(geoLocation.marker);
+
+
                         }
-
-                        if (search === "" && isCategorySelected) {
-                            geoLocation.marker.setMap(map);
-
-                            return true;
-                        }
-
 
                         if (geoLocation.name().toLowerCase().indexOf(search) == 0 && self.selectedCategories().length == 0) {
                             geoLocation.marker.setMap(map);
-
                             return true;
                         }
-
-                        removeMarker(geoLocation.marker);
-
-
-                             }
 
                         return false;
 
                     })
-                     }
+                }
 
 
 

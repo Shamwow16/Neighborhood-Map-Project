@@ -1,1 +1,1 @@
-var neighborhood={name:"Ravenswood, Chicago",latitude:41.968667,longitude:-87.674609};
+function makeid(){for(var o="",a="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",n=0;5>n;n++)o+=a.charAt(Math.floor(Math.random()*a.length));return o}var neighborhood={name:"Ravenswood, Chicago",latitude:41.968667,longitude:-87.674609};

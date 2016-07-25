@@ -25,7 +25,7 @@
                         <li id="filter-title" class="dropdown-item submenu">
                             <h4 class="text-center">Categories</h4>
                             <ul class="submenu-items">
-                                <!-- ko foreach: filteredCategories -->
+                                <!-- ko foreach: categories -->
                                 <div class="row">
                                     <input class="col-sm-1" type="checkbox" data-bind="checked: $root.selectedCategories,checkedValue:$data">
                                     <p class=" col-sm-8 dropdown-item no-indent" data-bind="text:$data"></p>
@@ -41,8 +41,7 @@
                     <h2 class="dropdown-toggle" type="button" data-toggle="dropdown">Events Nearby
   <span class="caret"></span></h2>
                     <ul class="dropdown-menu" id="event-item">
-                        <div class="error-message" data-bind="visible: shouldShowEventfulError
-">
+                        <div class="error-message" data-bind="visible: shouldShowEventfulError">
                             <p data-bind="text:eventfulError"></p>
                         </div>
                         <!-- ko foreach: eventsList -->
@@ -107,6 +106,7 @@
     <script src="js/places-model.js"></script>
     <script src="js/map-error.js"></script>
     <script src="js/map-view.js"></script>
+    <script src="js/yelpData.js"></script>
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLngU4pVOmo2YinJlLfIboJ4KyxSrGmE&libraries=places&callback=initMap" onerror="mapError()"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>

@@ -1,23 +1,6 @@
 var geoLocations = [];
 
-
-//Generates an ID for the yelp AJAX request
-function makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < 5; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}
-
-
-
-
-
-
-
+//Create geoLocation pseudoclass for each of the locations listed in the database
 var geoLocation = function(data) {
     var self = this;
     self.name = ko.observable(data.name);
@@ -35,14 +18,11 @@ var geoLocation = function(data) {
         self.selected(true);
     }
 };
-
-
 var ViewModel = function() {
-
         var self = this;
         self.neighborhoodInput = ko.observable('');
         self.places = ko.observableArray([]);
-
+        self.myFirebaseRef = ko.observable('');
         self.selectedLocation = ko.observable('');
         self.selectedLocationName = ko.observable('');
         self.selectedLocationCategory = ko.observable('');
@@ -52,22 +32,19 @@ var ViewModel = function() {
         self.selectedLocationYelpUrl = ko.observable('');
         self.selectedLocationAddress = ko.observable('');
         self.yelpDataArray = ko.observableArray([]);
+        self.yelpError = ko.observable('');
         self.categories = ko.observableArray([]);
         self.categoryArray = ko.observableArray([]);
         self.selectedCategories = ko.observableArray([]);
-        self.yelpError = ko.observable('');
         self.eventfulError = ko.observable('');
         self.eventTitle = ko.observable('');
         self.eventUrl = ko.observable('');
-        self.markerArray = ko.observableArray([]);
-        self.myFirebaseRef = ko.observable('');
         self.eventImageUrl = ko.observable('');
         self.eventsList = ko.observableArray([]);
         self.shouldShowMessage = ko.observable(false);
         self.shouldShowEventfulError = ko.observable(false);
-        self.setInfoWindowPosition = function(marker) {
-            self.infoWindow.open(map, marker)
-        };
+        self.markerArray = ko.observableArray([]);
+        self.infoWindow = new google.maps.InfoWindow();
         self.filter = ko.observable('');
 
         //Creates a reference to the firebase database which contains a JSON object of the locations I like in my neighborhood
@@ -80,8 +57,8 @@ var ViewModel = function() {
 
                 geoLocations.forEach(function(place) {
                     if (place == null) {
-                        var index = geoLocations().indexOf(place);
-                        geoLocations().splice(index, 1);
+                        var index = geoLocations.indexOf(place);
+                        geoLocations.splice(index, 1);
                     } else {
                         self.places.push(new geoLocation(place));
                     }
@@ -93,53 +70,36 @@ var ViewModel = function() {
                 alert(errorObject.code + "My locations of interest could not be loaded. :( Please refresh the page and try again. If issue persists, please email me at: shamyleg@gmail.com")
             })
 
-        //Shows the infoWindow on click by getting the infowindow content for a specific marker and then opening it.
-        self.showInfoWindowOnClick = function(element) {
-            self.getInfoWindowContent(self.infoWindow, element.marker);
-            self.infoWindow.open(map, element.marker);
-        }
-
         //Function that handles the AJAX request for Eventful API to show list of nearby events. Shows the first 10 events
         //happening this week.
         self.getEventfulData = function() {
-            var eventfulUrl = "http://api.eventful.com/json/events/search";
-            var parameters = {
-                location: "Chicago",
-                date: "This Week",
-                within: 10,
-                units: "mi",
-                app_key: "qFc3kDQ6G9kXThcX",
-                callback: 'cb'
-            }
-
-            var settings = {
-                url: eventfulUrl,
-                data: parameters,
-                dataType: 'jsonp',
-                success: function(results) {
-
-                    var eventArray = results.events.event;
-                    self.eventsList(eventArray);
-
-
-                },
-                error: function(error) {
-
-                    console.log(error);
-                    //Error handling for Eventful. Displays error message in dropdown if data does not load.
-                    self.eventfulError("Sorry, Eventful was unable to load events near " + neighborhood.name + ". Please refresh the page to try again.");
-                    self.shouldShowEventfulError(true);
+                var eventfulUrl = "http://api.eventful.com/json/events/search";
+                var parameters = {
+                    location: "Chicago",
+                    date: "This Week",
+                    within: 10,
+                    units: "mi",
+                    app_key: "qFc3kDQ6G9kXThcX",
+                    callback: 'cb'
                 }
+                var settings = {
+                    url: eventfulUrl,
+                    data: parameters,
+                    dataType: 'jsonp',
+                    success: function(results) {
+                        var eventArray = results.events.event;
+                        self.eventsList(eventArray);
+                    },
+                    error: function(error) {
+                        //Error handling for Eventful. Displays error message in dropdown if data does not load.
+                        self.eventfulError("Sorry, Eventful was unable to load events near " + neighborhood.name + ". Please refresh the page to try again.");
+                        self.shouldShowEventfulError(true);
+                    }
+                }
+                $.ajax(settings);
             }
-            $.ajax(settings);
-
-        }
-
-
-
-        //Call for the Eventful AJAX request is made here.
+            //Call for the Eventful AJAX request is made here.
         self.getEventfulData();
-
 
         //Below is the Yelp API request function definition. Uses each location's name to get information about it that is then displayed
         //in the infoWindows.
@@ -160,8 +120,6 @@ var ViewModel = function() {
             var tokenSecret = 'D7t2lRihVRUyZrGh2gMRZqFLlQ8';
             var signature = oauthSignature.generate('GET', yelpUrl, parameters, consumerSecret, tokenSecret, { encodeSignature: false });
             parameters['oauth_signature'] = signature;
-
-
             var settings = {
                 url: yelpUrl,
                 data: parameters,
@@ -170,7 +128,6 @@ var ViewModel = function() {
                 success: function(results) {
                     //If the Yelp response for a particular place is empty, runs error function
                     if (results.businesses.length == 0) {
-                        console.log("Boo");
                         this.error();
                     }
                     // If the Yelp responses are all successfully received, a marker is created for each place and category array is updated
@@ -180,7 +137,6 @@ var ViewModel = function() {
                         place.category = results.businesses[0].categories[0][0];
                         self.categoryArray().push(place.category);
                         self.yelpDataArray.push(results);
-
                         self.initializeInfoWindow(self.infoWindow, place);
                         self.markerArray().push(place.marker);
 
@@ -188,16 +144,11 @@ var ViewModel = function() {
                         // the same category.
 
                         if (self.categories().indexOf(place.category) == -1) {
-
                             self.categories.push(place.category);
                         }
-
-
                     }
                 },
                 error: function(error) {
-
-
                     //Finds index of place for which no yelp info was obtained and updates yelpError message.
                     var deleteIndex = self.places().indexOf(place);
                     self.places().splice(deleteIndex, 1);
@@ -205,12 +156,8 @@ var ViewModel = function() {
                     self.shouldShowMessage(true);
                 }
             };
-
             $.ajax(settings);
-
         }
-
-
 
         // This function sets the content for the infoWindow and each type of info is bound via Knockout to the DOM.
         self.setInfoWindowContent = function(yelpDataItem) {
@@ -251,6 +198,9 @@ var ViewModel = function() {
             return false;
         }
 
+
+        //This function initializes the infowindow for each of the locations. If a certain marker is clicked on, it will
+        //set the infowindow content for that marker.
         self.initializeInfoWindow = function(infowindow, place) {
 
             place.marker.addListener('click', function(infowindowCopy, marker) {
@@ -269,24 +219,18 @@ var ViewModel = function() {
                     place.marker.setAnimation(null);
                 }
             });
-
-
-        }
-
-        if (self.yelpDataArray().length == 0) {
-            self.infoWindow = new google.maps.InfoWindow();
-
         }
 
         //setMapContent makes the yelp Request for each location of interest once self.places is fully populated.
         self.setMapContent = function() {
-            if (self.places().length == (geoLocations.length - 2) && self.places().length > 0) {
+            if (self.places().length == geoLocations.length && self.places().length > 0) {
                 self.places().forEach(function(place) {
                     self.getYelpData(place);
                 })
+            } else {
+                console.log("Expected self.places() to have length of" + geoLocations.length + "but it had length of " + self.places().length);
             }
         }
-
 
         //This function shows infoWindow when a particular location is clicked and also toggles the bounce animation for a particular marker
         self.showInfoWindowOnClick = function(element) {
@@ -305,25 +249,20 @@ var ViewModel = function() {
             self.shouldShowEventfulError(false);
         }
 
-        /*   if (self.yelpDataArray().length == 0) {
-       self.setMapContent();
-   }
-*/
-
-
-
+        //self.selectedCategories has a subscription that listens for any changes to the array and sets/removes markers based
+        // on selection
         self.selectedCategories.subscribe(function(selectedCategories) {
 
             selectedCategories.forEach(function(selectedCategory) {
                 self.places().forEach(function(place) {
 
-
+                    //removes marker if it is not one of the selected categories.
                     if (selectedCategory != place.category && self.selectedCategories().indexOf(place.category) == -1) {
                         removeMarker(place.marker);
                         return false;
 
                     } else {
-
+                        //checks to see if marker already exists on page. If not, it will set the marker.
                         if (place.marker.map == null) {
                             place.marker.setMap(map);
                         }
@@ -334,11 +273,7 @@ var ViewModel = function() {
 
                 });
             });
-
-            self.selectedPlaces = ko.observableArray(self.places());
-
-
-
+            //if no specific category is selected, display all markers
             if (selectedCategories.length == 0) {
                 self.places().forEach(function(place) {
                     place.marker.setMap(map);
@@ -347,96 +282,47 @@ var ViewModel = function() {
         }, this);
 
 
-
+        /*filterLocationList is a computed knockout list that is displayed under the Search Bar. It shows location items that
+        have been a) searched for in the search box, b) filtered by category or c)both searched and filtered by category.
+    */
         self.filterLocationList = ko.computed(function() {
-            if (self.allMarkersSet() == true) {
-                var search = self.filter().toLowerCase();
-
-
-
-
-
-
-
-                if (self.places().length > 0 && self.allMarkersSet() == true) {
-
-
-                    return ko.utils.arrayFilter(self.places(), function(geoLocation) {
-                        var isCategorySelected = false;
-                        if (self.selectedCategories().length > 0) {
-                            console.log(self.selectedCategories().length);
-                            for (var i = 0; i < self.selectedCategories().length; i++) {
-                                if (geoLocation.category == self.selectedCategories()[i]) {
-                                    isCategorySelected = true;
-                                    geoLocation.selected(true);
-                                    /*return true;
-                                     */
-
-                                }
+            var search = self.filter().toLowerCase();
+            if (self.places().length > 0 && self.allMarkersSet() == true) {
+                return ko.utils.arrayFilter(self.places(), function(geoLocation) {
+                    var isCategorySelected = false;
+                    if (self.selectedCategories().length > 0) {
+                        for (var i = 0; i < self.selectedCategories().length; i++) {
+                            if (geoLocation.category == self.selectedCategories()[i]) {
+                                isCategorySelected = true;
+                                geoLocation.selected(true);
                             }
-
-                            if (search === "" && !isCategorySelected) {
-                                return false;
-                            }
-
-
-
                         }
-
-
-                        if (geoLocation.category != null && geoLocation.marker != null) {
-
-
-                            if (geoLocation.name().toLowerCase().indexOf(search) == 0 && search != "" && isCategorySelected) {
-                                geoLocation.marker.setMap(map);
-                                return true;
-                            }
-
-                            if (search === "" && isCategorySelected) {
-                                geoLocation.marker.setMap(map);
-
-                                return true;
-                            }
-
-
-                            if (geoLocation.name().toLowerCase().indexOf(search) == 0 && self.selectedCategories().length == 0) {
-                                geoLocation.marker.setMap(map);
-
-                                return true;
-                            }
-
-                            removeMarker(geoLocation.marker);
-
-
+                        if (search === "" && !isCategorySelected) {
+                            return false;
                         }
-
-                        if (geoLocation.name().toLowerCase().indexOf(search) == 0 && self.selectedCategories().length == 0) {
-                            geoLocation.marker.setMap(map);
-                            return true;
-                        }
-
-                        return false;
-
-                    })
-                }
+                    }
 
 
+                    if (geoLocation.name().toLowerCase().indexOf(search) == 0 && search != "" && isCategorySelected) {
+                        geoLocation.marker.setMap(map);
+                        return true;
+                    }
+                    if (search === "" && isCategorySelected) {
+                        geoLocation.marker.setMap(map);
 
+                        return true;
+                    }
+                    if (geoLocation.name().toLowerCase().indexOf(search) == 0 && self.selectedCategories().length == 0) {
+                        geoLocation.marker.setMap(map);
 
+                        return true;
+                    }
+                    removeMarker(geoLocation.marker);
+                    return false;
+                })
             }
+
         }, this);
-
-        self.filteredCategories = ko.computed(function() {
-            return ko.utils.arrayFilter(self.categories(), function(category) {
-
-                return true;
-            })
-        }, this);
-
-
-
-
-
 
 
     }
